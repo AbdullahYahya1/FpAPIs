@@ -11,7 +11,22 @@ namespace DataAccess.Models
         OutOfStock,
         Discontinued
     }
-
+    public enum Color
+    {
+        Black = 0,
+        White = 1,
+        Red = 2,
+        Green = 3,
+        Blue = 4,
+        Yellow = 5,
+        Orange = 6,
+        Purple = 7,
+        Pink = 8,
+        Gray = 9,
+        Brown = 10,
+        Cyan = 11,
+        Magenta = 12
+    }
     public class Product
     {
         [Key]
@@ -42,8 +57,7 @@ namespace DataAccess.Models
         public int StyleId { get; set; }
         public virtual Style Style { get; set; }
 
-        [StringLength(50)]
-        public string Color { get; set; }
+        public Color Color { get; set; }
         [Column(TypeName = "decimal(4, 2)")]
         public decimal Height { get; set; }
         [Column(TypeName = "decimal(4, 2)")]

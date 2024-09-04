@@ -50,13 +50,13 @@ try
     {
         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
     });
-    builder.Services.AddDbContext<WADbContext>(options =>
+    builder.Services.AddDbContext<FPDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ticket System API", Version = "v1" });
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "APIs", Version = "v1" });
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Description = @"JWT Authorization header using the Bearer scheme.  
@@ -113,14 +113,15 @@ try
 
     // Register services 
     builder.Services.AddScoped<IUserService, UserService>();
-    builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
     #region HealthChecks
 
     builder.Services.AddHealthChecks()
         .AddSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .AddDbContextCheck<WADbContext>(); ;
+        .AddDbContextCheck<FPDbContext>(); ;
     #endregion
 
 

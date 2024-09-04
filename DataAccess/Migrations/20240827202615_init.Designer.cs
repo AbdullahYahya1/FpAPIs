@@ -11,7 +11,7 @@ using DataAccess.Context;
 
 namespace WA.DataAccess.Migrations
 {
-    [DbContext(typeof(WADbContext))]
+    [DbContext(typeof(FPDbContext))]
     [Migration("20240827202615_init")]
     partial class init
     {

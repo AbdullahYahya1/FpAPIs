@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace WA.DataAccess.Migrations
 {
-    [DbContext(typeof(WADbContext))]
+    [DbContext(typeof(FPDbContext))]
     partial class WADbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -149,6 +149,29 @@ namespace WA.DataAccess.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("DataAccess.Models.Image", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImageId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("DataAccess.Models.Material", b =>
                 {
                     b.Property<int>("MaterialId")
@@ -203,10 +226,6 @@ namespace WA.DataAccess.Migrations
 
                     b.Property<decimal>("Height")
                         .HasColumnType("decimal(4, 2)");
-
-                    b.Property<string>("Images")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MaterialId")
                         .HasColumnType("int");
@@ -495,6 +514,17 @@ namespace WA.DataAccess.Migrations
                     b.Navigation("UpdateBy");
                 });
 
+            modelBuilder.Entity("DataAccess.Models.Image", b =>
+                {
+                    b.HasOne("DataAccess.Models.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("DataAccess.Models.Product", b =>
                 {
                     b.HasOne("DataAccess.Models.Brand", "Brand")
@@ -631,6 +661,11 @@ namespace WA.DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Models.Material", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.Product", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Style", b =>

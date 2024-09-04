@@ -30,7 +30,7 @@ namespace Business.Services
         private readonly IEmailSender _emailSender;
         private static readonly ConcurrentDictionary<string, string> VerificationCodes = new();
 
-        public UserService(WADbContext context, IUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper,
+        public UserService(FPDbContext context, IUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper,
             IHttpContextAccessor httpContextAccessor, ILogger<UserService> logger, IEmailSender emailSender) : base(context)
         {
             _unitOfWork = unitOfWork;
@@ -46,10 +46,10 @@ namespace Business.Services
         {
             try
             {
-                var user = await _unitOfWork.users.GetUserByEmail(emailOrName);
+                var user = await _unitOfWork.Users.GetUserByEmail(emailOrName);
                 if (user == null)
                 {
-                    user = await _unitOfWork.users.GetUserByName(emailOrName);
+                    user = await _unitOfWork.Users.GetUserByName(emailOrName);
                 }
 
 
@@ -107,7 +107,7 @@ namespace Business.Services
         {
             try
             {
-                var appUser = await _unitOfWork.users.GetUserById(user.UserId);
+                var appUser = await _unitOfWork.Users.GetUserById(user.UserId);
                 if (appUser == null || !appUser.IsActive)
                 {
                     return new ResponseModel<TokenResponse>
@@ -121,7 +121,7 @@ namespace Business.Services
 
                 appUser.RefreshToken = refreshToken;
                 appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-                await _unitOfWork.users.UpdateUser(appUser);
+                await _unitOfWork.Users.UpdateUser(appUser);
 
                 return new ResponseModel<TokenResponse>
                 {
@@ -186,7 +186,7 @@ namespace Business.Services
                     return new ResponseModel<TokenResponse> { IsSuccess = false, Message = "InvalidToken" };
 
                 var userID = principal.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                var user = await _unitOfWork.users.GetUserById(userID);
+                var user = await _unitOfWork.Users.GetUserById(userID);
                 if (user == null || user.RefreshToken != tokenRequest.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
                     return new ResponseModel<TokenResponse> { IsSuccess = false, Message = "InvalidRefreshToken" };
 
@@ -195,7 +195,7 @@ namespace Business.Services
 
                 user.RefreshToken = newRefreshToken;
                 user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-                await _unitOfWork.users.UpdateUser(user);
+                await _unitOfWork.Users.UpdateUser(user);
 
                 return new ResponseModel<TokenResponse>
                 {
@@ -242,12 +242,12 @@ namespace Business.Services
         {
             try
             {
-                var existingUser = await _unitOfWork.users.GetUserByEmail(userDto.Email);
+                var existingUser = await _unitOfWork.Users.GetUserByEmail(userDto.Email);
                 if (existingUser != null)
                 {
                     return new ResponseModel<bool> { IsSuccess = false, Message = "UserAlreadyExists" };
                 }
-                existingUser = await _unitOfWork.users.GetUserByName(userDto.UserName);
+                existingUser = await _unitOfWork.Users.GetUserByName(userDto.UserName);
                 if (existingUser != null)
                 {
                     return new ResponseModel<bool> { IsSuccess = false, Message = "UserAlreadyExists" };
@@ -282,7 +282,7 @@ namespace Business.Services
                 {
                     user.UserType = UserType.Client;
                 }
-                await _unitOfWork.users.CreateUser(user);
+                await _unitOfWork.Users.CreateUser(user);
                 return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
             }
             catch (Exception ex)
@@ -296,7 +296,7 @@ namespace Business.Services
         {
             try
             {
-                var user = await _unitOfWork.users.GetUserById(id);
+                var user = await _unitOfWork.Users.GetUserById(id);
                 if (user == null)
                     return new ResponseModel<GetOneUserDto> { IsSuccess = false, Message = "UserNotFound" };
 
@@ -330,13 +330,13 @@ namespace Business.Services
                     return new ResponseModel<bool> { IsSuccess = false, Message = "CurrentUserNotAuthenticated" };
                 }
 
-                var currentUser = await _unitOfWork.users.GetUserById(currentUserId);
+                var currentUser = await _unitOfWork.Users.GetUserById(currentUserId);
                 if (currentUser == null)
                 {
                     return new ResponseModel<bool> { IsSuccess = false, Message = "CurrentUserNotFound" };
                 }
 
-                if (userDto.UserName != currentUser.UserName && await _unitOfWork.users.GetUserByName(userDto.UserName) != null)
+                if (userDto.UserName != currentUser.UserName && await _unitOfWork.Users.GetUserByName(userDto.UserName) != null)
                 {
                     return new ResponseModel<bool> { IsSuccess = false, Message = "UsernameInUse" };
                 }
@@ -353,7 +353,7 @@ namespace Business.Services
                 currentUser.UpdateDate = DateTime.UtcNow;
                 currentUser.UpdateById = currentUserId;
 
-                await _unitOfWork.users.UpdateUser(currentUser);
+                await _unitOfWork.Users.UpdateUser(currentUser);
                 return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
             }
             catch (Exception ex)
@@ -367,7 +367,7 @@ namespace Business.Services
         {
             try
             {
-                var user = await _unitOfWork.users.GetUserById(id);
+                var user = await _unitOfWork.Users.GetUserById(id);
                 if (user == null)
                 {
                     return new ResponseModel<bool> { IsSuccess = false, Message = "UserNotFound", Result = false };
@@ -375,7 +375,7 @@ namespace Business.Services
 
                 user.IsActive = !user.IsActive;
                 user.UpdateDate = DateTime.UtcNow;
-                await _unitOfWork.users.UpdateUser(user);
+                await _unitOfWork.Users.UpdateUser(user);
 
                 return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
             }
@@ -394,11 +394,11 @@ namespace Business.Services
 
                 if (type.HasValue)
                 {
-                    users = await _unitOfWork.users.GetAllUsers(u => u.UserType == type.Value);
+                    users = await _unitOfWork.Users.GetAllUsers(u => u.UserType == type.Value);
                 }
                 else
                 {
-                    users = await _unitOfWork.users.GetAllUsers();
+                    users = await _unitOfWork.Users.GetAllUsers();
                 }
 
                 var userList = users.ToList();
@@ -428,7 +428,7 @@ namespace Business.Services
         {
             try
             {
-                var user = await _unitOfWork.users.GetUserByEmail(forgetPasswordDto.Email);
+                var user = await _unitOfWork.Users.GetUserByEmail(forgetPasswordDto.Email);
                 if (user == null)
                 {
                     _logger.LogWarning($"User not found for email: {forgetPasswordDto.Email}");
@@ -461,7 +461,7 @@ namespace Business.Services
                     return new ResponseModel<bool> { Result = false, IsSuccess = false, Message = "PasswordsMismatch" };
                 }
 
-                var user = await _unitOfWork.users.GetUserByEmail(resetPasswordDto.Email);
+                var user = await _unitOfWork.Users.GetUserByEmail(resetPasswordDto.Email);
                 if (user == null)
                 {
                     _logger.LogWarning($"User not found for email: {resetPasswordDto.Email}");
@@ -489,7 +489,7 @@ namespace Business.Services
                 }
 
                 user.Password = BCrypt.Net.BCrypt.HashPassword(resetPasswordDto.NewPassword);
-                await _unitOfWork.users.UpdateUser(user);
+                await _unitOfWork.Users.UpdateUser(user);
 
                 VerificationCodes.TryRemove(resetPasswordDto.Email, out _);
 
@@ -533,7 +533,7 @@ namespace Business.Services
         {
             try
             {
-                var users = await _unitOfWork.users.GetAllUsers();
+                var users = await _unitOfWork.Users.GetAllUsers();
                 if (type.HasValue)
                 {
                     users = users.Where(u => u.UserType == type.Value).ToList();

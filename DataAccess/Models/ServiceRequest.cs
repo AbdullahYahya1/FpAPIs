@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using DataAccess.Models;
 
 public enum ServiceRequestStatus
 {
@@ -13,10 +14,9 @@ public enum ServiceRequestStatus
 public enum RequestType
 {
     Repair,
-    Replacement,
     Return,
-    Inquiry,
-    Complaint
+    Sell,
+    buy
 }
 
 public class ServiceRequest
@@ -43,9 +43,8 @@ public class ServiceRequest
 
     public DateTime? ResponseDate { get; set; }
 
-    [StringLength(1000)]
-    public string Images { get; set; }  // Consider storing image URLs or paths
 
     [StringLength(2000)]
     public string ResponseDetails { get; set; }
+    public virtual ICollection<ServiceImage> Images { get; set; } = new List<ServiceImage>();
 }

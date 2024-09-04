@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DataAccess.Models
 {
@@ -54,9 +55,7 @@ namespace DataAccess.Models
 
         public int BrandId { get; set; }
         public virtual Brand Brand { get; set; }
-
-        public string Images { get; set; }
-
+        public virtual ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
         public ProductStatus Status { get; set; }
     }
 

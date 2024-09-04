@@ -6,9 +6,9 @@ namespace DataAccess.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly WADbContext _db;
+        private readonly FPDbContext _db;
         internal DbSet<T> _dbSet;
-        public Repository(WADbContext db)
+        public Repository(FPDbContext db)
         {
             _db = db;
             _dbSet = _db.Set<T>();

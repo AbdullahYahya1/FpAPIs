@@ -16,10 +16,10 @@ namespace DataAccess.Repositories
 {
     public class UserRepository : Repository<AppUser>, IUserRepository
     {
-        private readonly WADbContext _context;
+        private readonly FPDbContext _context;
         private readonly IMapper _mapper;
 
-        public UserRepository(WADbContext context, IMapper mapper) : base(context)
+        public UserRepository(FPDbContext context, IMapper mapper) : base(context)
         {
             _context = context;
             _mapper = mapper;

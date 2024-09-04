@@ -6,9 +6,9 @@ namespace Business.Services
 {
     public class Service<T> : IService<T> where T : class
     {
-        protected readonly WADbContext _context;
+        protected readonly FPDbContext _context;
 
-        public Service(WADbContext context)
+        public Service(FPDbContext context)
         {
             _context = context;
         }

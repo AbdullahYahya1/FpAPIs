@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using DataAccess.Models;
+using System.Reflection.Emit;
 
 namespace DataAccess.Context
 {
-    public class WADbContext : DbContext
+    public class FPDbContext : DbContext
     {
         public DbSet<AppUser> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -16,8 +17,9 @@ namespace DataAccess.Context
         public DbSet<UserPurchaseTransaction> UserPurchaseTransactions { get; set; }
         public DbSet<UserAddress> UserAddresses { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
+        public DbSet<ProductImage> Images { get; set; }
 
-        public WADbContext(DbContextOptions<WADbContext> options) : base(options)
+        public FPDbContext(DbContextOptions<FPDbContext> options) : base(options)
         {
 
         }
@@ -40,6 +42,12 @@ namespace DataAccess.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Configure relationships and constraints
+
+             builder.Entity<Product>()
+            .HasMany(p => p.Images)     
+            .WithOne(i => i.Product)    
+            .HasForeignKey(i => i.ProductId)  
+            .OnDelete(DeleteBehavior.Cascade);
 
             // Category - Product relationship
             builder.Entity<Product>()

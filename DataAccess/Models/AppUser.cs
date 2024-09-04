@@ -6,6 +6,7 @@ public enum UserType
     Client = 0,
     Manager = 1,
     Support = 2,
+    DeliveryRepresentative = 3 // مندوب توصيل
 }
 
 public class AppUser

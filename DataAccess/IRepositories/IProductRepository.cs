@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.IRepositories
 {
-    public interface IUnitOfWork
+    public interface IProductRepository
     {
-        IUserRepository Users { get; }
-        IProductRepository Products { get; }
-        Task<int> SaveChangesAsync();
-
     }
 }

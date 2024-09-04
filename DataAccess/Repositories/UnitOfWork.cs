@@ -5,13 +5,16 @@ namespace DataAccess.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly WADbContext _db;
-        public IUserRepository users { get; }
- 
-        public UnitOfWork(WADbContext context,  IUserRepository userRepository)
+        private readonly FPDbContext _db;
+        public IUserRepository Users { get; }
+        public IProductRepository Products { get; }
+
+
+        public UnitOfWork(FPDbContext context,  IUserRepository userRepository , IProductRepository ProductRepository)
         {
             _db = context;
-            users = userRepository;
+            Users = userRepository;
+            Products = ProductRepository;
         }
 
 

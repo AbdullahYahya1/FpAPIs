@@ -18,6 +18,20 @@ namespace DataAccess.Mapping
             CreateMap<AppUser, PostUserDto>().ReverseMap();
             CreateMap<AppUser, GetOneUserDto>().ReverseMap();
 
+
+            CreateMap<Product, PostProdcutDto>().ReverseMap();
+
+        
+            CreateMap<Brand, PostBrandDto>().ReverseMap();
+
+
+            CreateMap<Style,PostStyleDto>().ReverseMap();
+
+
+            CreateMap<Material,PostMaterialDto>().ReverseMap();
+
+
+            CreateMap<Category,PostCategoryDto>().ReverseMap();
         }
     }
 }

@@ -10,6 +10,11 @@ namespace DataAccess.IRepositories
     {
         IUserRepository Users { get; }
         IProductRepository Products { get; }
+        IBrandRepository Brands  { get; }
+        IMaterialRepository Materials { get; }
+        ICategoryRepository Categorys { get; }
+        IStyleRepository Styles { get; }
+
         Task<int> SaveChangesAsync();
 
     }

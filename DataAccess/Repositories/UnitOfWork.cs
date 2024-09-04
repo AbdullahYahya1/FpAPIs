@@ -9,12 +9,27 @@ namespace DataAccess.Repositories
         public IUserRepository Users { get; }
         public IProductRepository Products { get; }
 
+        public IBrandRepository Brands { get; }
+        public IMaterialRepository Materials { get; }
+        public ICategoryRepository Categorys { get; }
+        public IStyleRepository Styles { get; }
 
-        public UnitOfWork(FPDbContext context,  IUserRepository userRepository , IProductRepository ProductRepository)
+        public UnitOfWork(
+            FPDbContext context,
+            IUserRepository userRepository,
+            IProductRepository productRepository,
+            IBrandRepository brandRepository,
+            IMaterialRepository materialRepository,
+            ICategoryRepository categoryRepository,
+            IStyleRepository styleRepository)
         {
             _db = context;
             Users = userRepository;
-            Products = ProductRepository;
+            Products = productRepository;
+            Brands = brandRepository;
+            Materials = materialRepository;
+            Categorys = categoryRepository;
+            Styles = styleRepository;
         }
 
 

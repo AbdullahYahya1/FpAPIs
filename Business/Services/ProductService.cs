@@ -54,19 +54,31 @@ namespace Business.Services
         
         public async Task<ResponseModel<bool>> CreateProdcutBrand(PostBrandDto brandPostDto)
         {
-            throw new NotImplementedException(); 
+            var brand = _mapper.Map<Brand>(brandPostDto);
+            await _unitOfWork.Brands.AddAsync(brand);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess=true , Result= true};
         }
         public async Task<ResponseModel<bool>> CreateProdcutStyle(PostStyleDto postStyleDto)
         {
-            throw new NotImplementedException();
+            var Style = _mapper.Map<Style>(postStyleDto);
+            await _unitOfWork.Styles.AddAsync(Style);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
         }
         public async Task<ResponseModel<bool>> CreateProdcutCategory(PostCategoryDto postCategoryDto)
         {
-            throw new NotImplementedException();
+            var Category = _mapper.Map<Category>(postCategoryDto);
+            await _unitOfWork.Categorys.AddAsync(Category);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
         }
         public async Task<ResponseModel<bool>> CreateProdcutMaterial(PostMaterialDto postMaterialDto)
         {
-            throw new NotImplementedException();
+            var Material = _mapper.Map<Material>(postMaterialDto);
+            await _unitOfWork.Materials.AddAsync(Material);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
         }
     }
 }

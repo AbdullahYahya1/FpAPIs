@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Business.IServices;
+using Business.Services;
+using DataAccess.DTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FpAPIs.Controllers
@@ -7,11 +10,76 @@ namespace FpAPIs.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        public ProductController() { }
-        [HttpGet]
-        public async Task<IActionResult> GetProducts()
-        {
-            return Ok();
+        private readonly IProductService _productService;
+
+        public ProductController(IProductService productService) {
+            _productService = productService;
         }
+        [HttpGet("GetProducts")]
+        public async Task<IActionResult> GetProducts( [FromQuery] paginationDto paginationDto)
+        {
+            var res = await _productService.GetProducts(paginationDto);
+            return Ok(res);
+        }
+        [HttpPost("AddProduct")]
+        public async Task<IActionResult> AddProdcut(PostProdcutDto postProdcutDto)
+        {
+            var res = await _productService.CreateProduct(postProdcutDto);
+            return Ok(res);
+        }
+
+        [HttpPost("AddBrand")]
+        public async Task<IActionResult> AddBrand(PostBrandDto brandDto)
+        {
+            var res = await _productService.CreateProdcutBrand(brandDto);
+            return Ok(res);
+        }
+        [HttpPost("AddStyle")]
+        public async Task<IActionResult> AddStyle(PostStyleDto StyleDto)
+        {
+            var res = await _productService.CreateProdcutStyle(StyleDto);
+            return Ok(res);
+        }
+        [HttpPost("AddMaterial")]
+        public async Task<IActionResult> AddMaterial(PostMaterialDto MaterialDto)
+        {
+            var res = await _productService.CreateProdcutMaterial(MaterialDto);
+            return Ok(res);
+        }
+        [HttpPost("AddCategory")]
+        public async Task<IActionResult> AddCategory(PostCategoryDto CategoryDto)
+        {
+            var res = await _productService.CreateProdcutCategory(CategoryDto);
+            return Ok(res);
+        }
+
+        [HttpGet("GetBrandsLookUp")]
+        public async Task<IActionResult> GetBrandsLookUp()
+        {
+            var res = await _productService.GetBrandsLookUp();
+            return Ok(res);
+        }
+
+        [HttpGet("GetStyleLookUp")]
+        public async Task<IActionResult> GetStyleLookUp()
+        {
+            var res = await _productService.GetStyleLookUp();
+            return Ok(res);
+        }
+
+        [HttpGet("GetMaterialLookUp")]
+        public async Task<IActionResult> GetMaterialLookUp()
+        {
+            var res = await _productService.GetMaterialLookUp();
+            return Ok(res);
+        }
+
+        [HttpGet("GetCategoryLookUp")]
+        public async Task<IActionResult> GetCategoryLookUp()
+        {
+            var res = await _productService.GetCategoryLookUp();
+            return Ok(res);
+        }
+
     }
 }

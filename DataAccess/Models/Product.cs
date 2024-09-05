@@ -70,7 +70,7 @@ namespace DataAccess.Models
         public int BrandId { get; set; }
         public virtual Brand Brand { get; set; }
         public virtual ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
-        public ProductStatus Status { get; set; }
+        public ProductStatus ProductStatus { get; set; }
     }
 
 }

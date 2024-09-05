@@ -15,10 +15,17 @@ namespace FpAPIs.Controllers
         public ProductController(IProductService productService) {
             _productService = productService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        [HttpGet("GetProducts")]
+        public async Task<IActionResult> GetProducts( [FromQuery] paginationDto paginationDto)
         {
-            return Ok();
+            var res = await _productService.GetProducts(paginationDto);
+            return Ok(res);
+        }
+        [HttpPost("AddProduct")]
+        public async Task<IActionResult> AddProdcut(PostProdcutDto postProdcutDto)
+        {
+            var res = await _productService.CreateProduct(postProdcutDto);
+            return Ok(res);
         }
 
         [HttpPost("AddBrand")]
@@ -45,5 +52,34 @@ namespace FpAPIs.Controllers
             var res = await _productService.CreateProdcutCategory(CategoryDto);
             return Ok(res);
         }
+
+        [HttpGet("GetBrandsLookUp")]
+        public async Task<IActionResult> GetBrandsLookUp()
+        {
+            var res = await _productService.GetBrandsLookUp();
+            return Ok(res);
+        }
+
+        [HttpGet("GetStyleLookUp")]
+        public async Task<IActionResult> GetStyleLookUp()
+        {
+            var res = await _productService.GetStyleLookUp();
+            return Ok(res);
+        }
+
+        [HttpGet("GetMaterialLookUp")]
+        public async Task<IActionResult> GetMaterialLookUp()
+        {
+            var res = await _productService.GetMaterialLookUp();
+            return Ok(res);
+        }
+
+        [HttpGet("GetCategoryLookUp")]
+        public async Task<IActionResult> GetCategoryLookUp()
+        {
+            var res = await _productService.GetCategoryLookUp();
+            return Ok(res);
+        }
+
     }
 }

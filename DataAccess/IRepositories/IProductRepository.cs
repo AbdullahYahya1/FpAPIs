@@ -1,4 +1,5 @@
-﻿using DataAccess.Models;
+﻿using DataAccess.DTOs;
+using DataAccess.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace DataAccess.IRepositories
 {
     public interface IProductRepository : IRepository<Product>
     {
+        Task<List<Product>> GetAllWithIncludesAsync(paginationDto paginationDto); 
     }
 }

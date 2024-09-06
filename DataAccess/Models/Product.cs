@@ -6,10 +6,8 @@ namespace DataAccess.Models
 {
     public enum ProductStatus
     {
-        Active,
-        Inactive,
-        OutOfStock,
-        Discontinued
+        Active=0,
+        Inactive=1,
     }
     public enum Color
     {
@@ -58,19 +56,24 @@ namespace DataAccess.Models
         public virtual Style Style { get; set; }
 
         public Color Color { get; set; }
-        [Column(TypeName = "decimal(4, 2)")]
+        [Column(TypeName = "decimal(5, 2)")]
         public decimal Height { get; set; }
-        [Column(TypeName = "decimal(4, 2)")]
+
+        [Column(TypeName = "decimal(5, 2)")]
         public decimal Width { get; set; }
-        [Column(TypeName = "decimal(4, 2)")]
+
+        [Column(TypeName = "decimal(5, 2)")]
         public decimal Weight { get; set; }
+
         [Column(TypeName = "decimal(7, 2)")]
         public decimal Price { get; set; }
+
 
         public int BrandId { get; set; }
         public virtual Brand Brand { get; set; }
         public virtual ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
         public ProductStatus ProductStatus { get; set; }
+        public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 
 }

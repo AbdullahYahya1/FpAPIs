@@ -38,11 +38,12 @@ namespace Business.Services
                 {
                     var imageBytes = Convert.FromBase64String(img);
                     var uniqueFileName = $"{Guid.NewGuid()}.jpg";
-                    var imagePath = Path.Combine("wwwroot", "images", uniqueFileName);
-                    await System.IO.File.WriteAllBytesAsync(imagePath, imageBytes);
+                    var physicalPath = Path.Combine("wwwroot", "images", uniqueFileName);
+                    await System.IO.File.WriteAllBytesAsync(physicalPath, imageBytes);
+                    var relativeImagePath = Path.Combine("images", uniqueFileName).Replace("\\", "/");
                     var productImage = new ProductImage
                     {
-                        ImageUrl = imagePath,
+                        ImageUrl = relativeImagePath,
                         ProductId = product.ProductId
                     };
                     product.Images.Add(productImage);
@@ -50,11 +51,12 @@ namespace Business.Services
                 await _unitOfWork.Products.UpdateAsync(product);
                 await _unitOfWork.SaveChangesAsync();
             }
-            
-            return new ResponseModel<Product> {IsSuccess=true , Result= product };
+
+            return new ResponseModel<Product> { IsSuccess = true, Result = product };
         }
-        
-        
+
+
+
         public async Task<ResponseModel<bool>> CreateProdcutBrand(PostBrandDto brandPostDto)
         {
             var brand = _mapper.Map<Brand>(brandPostDto);
@@ -137,6 +139,20 @@ namespace Business.Services
             var products = await _unitOfWork.Products.GetAllWithIncludesAsync(paginationDto);
             var productsDtos = _mapper.Map<List<GetProductDto>>(products);
             return new ResponseModel<List<GetProductDto>> { IsSuccess = true, Result = productsDtos }; 
+        }
+
+        public async Task<ResponseModel<List<GetProductDto>>> SearchProducts(ProductSearchDto productSearchDto)
+        {
+            var products = await _unitOfWork.Products.SearchAsync(productSearchDto);
+            var productsDtos = _mapper.Map<List<GetProductDto>>(products);
+            return new ResponseModel<List<GetProductDto>> { IsSuccess = true, Result = productsDtos };
+        }
+
+        public async Task<ResponseModel<GetProductDto>> GetProduct(int productId)
+        {
+            var product = await _unitOfWork.Products.GetProductAllWithIncludesAsync(productId);
+            var productdto = _mapper.Map<GetProductDto>(product);
+            return new ResponseModel<GetProductDto> { IsSuccess = true, Result = productdto };
         }
     }
 }

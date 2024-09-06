@@ -15,10 +15,22 @@ namespace FpAPIs.Controllers
         public ProductController(IProductService productService) {
             _productService = productService;
         }
+        [HttpGet("SearchProducts")]
+        public async Task<IActionResult> SearchProducts([FromQuery] ProductSearchDto productSearchDto)
+        {
+            var res = await _productService.SearchProducts(productSearchDto);
+            return Ok(res); 
+        }
         [HttpGet("GetProducts")]
         public async Task<IActionResult> GetProducts( [FromQuery] paginationDto paginationDto)
         {
             var res = await _productService.GetProducts(paginationDto);
+            return Ok(res);
+        }
+        [HttpGet("GetProduct/{productId}")]
+        public async Task<IActionResult> GetProducts(int productId)
+        {
+            var res = await _productService.GetProduct(productId);
             return Ok(res);
         }
         [HttpPost("AddProduct")]

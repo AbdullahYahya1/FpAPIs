@@ -12,6 +12,7 @@ namespace Business.IServices
     {
         Task<ResponseModel<Product>> CreateProduct(PostProdcutDto postProdcutDto);
         Task<ResponseModel<List<GetProductDto>>> GetProducts(paginationDto paginationDto);
+        Task<ResponseModel<GetProductDto>> GetProduct(int productId);
 
         Task<ResponseModel<bool>> CreateProdcutMaterial(PostMaterialDto postMaterialDto);
         Task<ResponseModel<bool>> CreateProdcutCategory(PostCategoryDto postCategoryDto);
@@ -22,7 +23,6 @@ namespace Business.IServices
         Task<ResponseModel<List<LookUpDataModel<int>>>> GetStyleLookUp();
         Task<ResponseModel<List<LookUpDataModel<int>>>> GetMaterialLookUp();
         Task<ResponseModel<List<LookUpDataModel<int>>>> GetCategoryLookUp();
-
-
+        Task<ResponseModel<List<GetProductDto>>> SearchProducts(ProductSearchDto productSearchDto);
     }
 }

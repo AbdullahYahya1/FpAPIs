@@ -18,6 +18,7 @@ namespace DataAccess.Context
         public DbSet<UserAddress> UserAddresses { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<ProductImage> Images { get; set; }
+        public DbSet<CartItem> cartItems { get; set; }
 
         public FPDbContext(DbContextOptions<FPDbContext> options) : base(options)
         {
@@ -132,6 +133,28 @@ namespace DataAccess.Context
                 .WithMany()
                 .HasForeignKey(o => o.ShippingAddressId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            // AppUser - CartItem relationship
+            builder.Entity<CartItem>()
+                .HasOne(ci => ci.User)
+                .WithMany(u => u.CartItems)
+                .HasForeignKey(ci => ci.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Product - CartItem relationship
+            builder.Entity<CartItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany(p => p.CartItems)
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Add a unique constraint to prevent duplicates
+            builder.Entity<CartItem>()
+                .HasIndex(ci => new { ci.UserId, ci.ProductId })
+                .IsUnique();
+
         }
     }
 }

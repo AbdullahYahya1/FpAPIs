@@ -14,6 +14,7 @@ namespace DataAccess.IRepositories
         IMaterialRepository Materials { get; }
         ICategoryRepository Categorys { get; }
         IStyleRepository Styles { get; }
+        IServiceRequestRepository ServiceRequests { get; }
 
         Task<int> SaveChangesAsync();
 

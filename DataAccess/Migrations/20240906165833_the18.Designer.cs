@@ -4,6 +4,7 @@ using DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WA.DataAccess.Migrations
 {
     [DbContext(typeof(FPDbContext))]
-    partial class WADbContextModelSnapshot : ModelSnapshot
+    [Migration("20240906165833_the18")]
+    partial class the18
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -432,9 +435,6 @@ namespace WA.DataAccess.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<decimal?>("PurchasePrice")
-                        .HasColumnType("decimal(7, 2)");
-
                     b.Property<int>("RequestType")
                         .HasColumnType("int");
 
@@ -448,7 +448,7 @@ namespace WA.DataAccess.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<int>("ServiceRequestStatus")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("SubmissionDate")

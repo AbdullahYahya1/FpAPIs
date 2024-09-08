@@ -6,12 +6,12 @@ namespace DataAccess.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly FPDbContext _db;
+        private readonly FPDbContext _context;
         internal DbSet<T> _dbSet;
-        public Repository(FPDbContext db)
+        public Repository(FPDbContext context)
         {
-            _db = db;
-            _dbSet = _db.Set<T>();
+            _context = context;
+            _dbSet = _context.Set<T>();
         }
         public IQueryable<T> GetAll()
         {

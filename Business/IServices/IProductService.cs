@@ -24,5 +24,7 @@ namespace Business.IServices
         Task<ResponseModel<List<LookUpDataModel<int>>>> GetMaterialLookUp();
         Task<ResponseModel<List<LookUpDataModel<int>>>> GetCategoryLookUp();
         Task<ResponseModel<List<GetProductDto>>> SearchProducts(ProductSearchDto productSearchDto);
+        Task<ResponseModel<List<LookUpDataModel<int>>>> ProductStatusLookup();
+        Task<ResponseModel<List<LookUpDataModel<int>>>> ProductColorLookup();
     }
 }

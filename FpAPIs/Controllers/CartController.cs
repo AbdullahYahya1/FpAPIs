@@ -7,5 +7,10 @@ namespace FpAPIs.Controllers
     [ApiController]
     public class CartController : ControllerBase
     {
+        [HttpGet]
+        public async Task<IActionResult> getCartItems()
+        {
+            return Ok(); 
+        }
     }
 }

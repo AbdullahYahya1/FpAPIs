@@ -154,5 +154,56 @@ namespace Business.Services
             var productdto = _mapper.Map<GetProductDto>(product);
             return new ResponseModel<GetProductDto> { IsSuccess = true, Result = productdto };
         }
+
+
+        public async Task<ResponseModel<List<LookUpDataModel<int>>>> ProductStatusLookup()
+        {
+            try
+            {
+                var result = Enum.GetValues(typeof(ProductStatus))
+                                 .Cast<ProductStatus>()
+                                 .Select(enumValue => new LookUpDataModel<int>
+                                 {
+                                     Value = Convert.ToInt32(enumValue),
+                                     NameAr = enumValue.ToString(),
+                                     NameEn = enumValue.ToString()
+                                 }).ToList();
+                return new ResponseModel<List<LookUpDataModel<int>>> { Result = result, IsSuccess = true };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<List<LookUpDataModel<int>>>
+                {
+                    Result = new List<LookUpDataModel<int>>(),
+                    IsSuccess = false,
+                    Message = "ErrorFound"
+                };
+            }
+        }
+        public async Task<ResponseModel<List<LookUpDataModel<int>>>> ProductColorLookup()
+        {
+            try
+            {
+                var result = Enum.GetValues(typeof(Color))
+                                 .Cast<Color>()
+                                 .Select(enumValue => new LookUpDataModel<int>
+                                 {
+                                     Value = Convert.ToInt32(enumValue),
+                                     NameAr = enumValue.ToString(),
+                                     NameEn = enumValue.ToString()
+                                 }).ToList();
+                return new ResponseModel<List<LookUpDataModel<int>>> { Result = result, IsSuccess = true };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<List<LookUpDataModel<int>>>
+                {
+                    Result = new List<LookUpDataModel<int>>(),
+                    IsSuccess = false,
+                    Message = "ErrorFound"
+                };
+            }
+        }
+
     }
 }

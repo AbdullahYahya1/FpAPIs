@@ -36,8 +36,9 @@ public class ServiceRequest
 
     [Column(TypeName = "decimal(7, 2)")]
     public decimal? RequestedPrice { get; set; }
-
-    public ServiceRequestStatus Status { get; set; }
+    [Column(TypeName = "decimal(7, 2)")]
+    public decimal? PurchasePrice { get; set; }
+    public ServiceRequestStatus ServiceRequestStatus { get; set; }
 
     public DateTime SubmissionDate { get; set; }
 
@@ -45,6 +46,6 @@ public class ServiceRequest
 
 
     [StringLength(2000)]
-    public string ResponseDetails { get; set; }
+    public string? ResponseDetails { get; set; }
     public virtual ICollection<ServiceImage> Images { get; set; } = new List<ServiceImage>();
 }

@@ -93,5 +93,17 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
 
+        [HttpGet("ProductStatusLookup")]
+        public async Task<IActionResult> ProductStatusLookup()
+        {
+            var res = await _productService.ProductStatusLookup();
+            return Ok(res);
+        }
+        [HttpGet("ProductColorLookup")]
+        public async Task<IActionResult> ProductColorLookup()
+        {
+            var res = await _productService.ProductColorLookup();
+            return Ok(res);
+        }
     }
 }

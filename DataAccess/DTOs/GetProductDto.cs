@@ -24,7 +24,7 @@ namespace DataAccess.DTOs
         public decimal Weight { get; set; }
         public decimal Price { get; set; }
         public PostBrandDto Brand { get; set; }
-        public List<ProductImage> Images { get; set; } = new List<ProductImage>();
+        public List<ImageDto> Images { get; set; } = new List<ImageDto>();
         public ProductStatus ProductStatus { get; set; }
     }
 }

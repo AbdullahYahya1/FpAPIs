@@ -121,6 +121,8 @@ try
     builder.Services.AddScoped<IStyleRepository, StyleRepository>();
     builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
     builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+    builder.Services.AddScoped<IServiceRequestService, ServiceRequestService>();
+    builder.Services.AddScoped<IServiceRequestRepository, ServiceRequestRepository>();
 
     #region HealthChecks
 

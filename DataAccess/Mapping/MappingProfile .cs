@@ -34,8 +34,13 @@ namespace DataAccess.Mapping
             CreateMap<Category,PostCategoryDto>().ReverseMap();
 
 
-            CreateMap<Product, GetProductDto>()
-                .ReverseMap();
+            CreateMap<Product, GetProductDto>().ReverseMap();
+            CreateMap<ProductImage, ImageDto>().ReverseMap();
+
+            CreateMap<ServiceRequest, PostServiceDto>().ReverseMap();
+            CreateMap<ServiceImage, ImageDto>().ReverseMap();
+            CreateMap<ServiceRequest, GetServiceDto>().ReverseMap();
+
         }
     }
 }

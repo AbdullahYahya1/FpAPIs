@@ -18,7 +18,9 @@ namespace DataAccess.Context
         public DbSet<UserAddress> UserAddresses { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<ProductImage> Images { get; set; }
-        public DbSet<CartItem> cartItems { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<WishlistItem> WishlistItems { get; set; }
+
 
         public FPDbContext(DbContextOptions<FPDbContext> options) : base(options)
         {
@@ -155,6 +157,24 @@ namespace DataAccess.Context
                 .HasIndex(ci => new { ci.UserId, ci.ProductId })
                 .IsUnique();
 
+            // AppUser - WishlistItem relationship
+            builder.Entity<WishlistItem>()
+                .HasOne(ci => ci.User)
+                .WithMany(u => u.WishlistItems)
+                .HasForeignKey(ci => ci.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Product - WishlistItem relationship
+            builder.Entity<WishlistItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany(p => p.WishlistItems)
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Add a unique constraint to prevent duplicates
+            builder.Entity<WishlistItem>()
+                .HasIndex(ci => new { ci.UserId, ci.ProductId })
+                .IsUnique();
         }
     }
 }

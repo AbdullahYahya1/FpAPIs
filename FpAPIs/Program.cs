@@ -124,6 +124,11 @@ try
     builder.Services.AddScoped<IServiceRequestService, ServiceRequestService>();
     builder.Services.AddScoped<IServiceRequestRepository, ServiceRequestRepository>();
 
+    builder.Services.AddScoped<IWishlistItemRepository, WishlistItemRepository>();
+    builder.Services.AddScoped<IWishlistItemServices, WishlistItemServices>();
+    builder.Services.AddScoped<ICartItemService, CartItemService>();
+    builder.Services.AddScoped<ICartItemRepository, CartItemRepository> ();
+
     #region HealthChecks
 
     builder.Services.AddHealthChecks()

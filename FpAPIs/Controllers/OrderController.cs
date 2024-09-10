@@ -9,5 +9,14 @@ namespace FpAPIs.Controllers
     [Authorize]
     public class OrderController : ControllerBase
     {
+        [HttpGet("GetOrders")]
+        public async Task<IActionResult> GetOrders() {
+            return Ok();
+        }
+        [HttpPost("CreateOrder")]
+        public async Task<IActionResult> CreateOrder()
+        {
+            return Ok();
+        }
     }
 }

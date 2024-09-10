@@ -15,6 +15,8 @@ namespace DataAccess.IRepositories
         ICategoryRepository Categorys { get; }
         IStyleRepository Styles { get; }
         IServiceRequestRepository ServiceRequests { get; }
+        ICartItemRepository CartItems { get; }
+        IWishlistItemRepository WishlistItems { get; }
 
         Task<int> SaveChangesAsync();
 

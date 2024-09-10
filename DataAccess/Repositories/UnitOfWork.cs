@@ -13,7 +13,8 @@ namespace DataAccess.Repositories
         public IMaterialRepository Materials { get; }
         public ICategoryRepository Categorys { get; }
         public IStyleRepository Styles { get; }
-
+        public ICartItemRepository CartItems { get; }
+        public IWishlistItemRepository WishlistItems { get; }
         public IServiceRequestRepository ServiceRequests { get; }
         public UnitOfWork(
             FPDbContext context,
@@ -23,7 +24,9 @@ namespace DataAccess.Repositories
             IMaterialRepository materialRepository,
             ICategoryRepository categoryRepository,
             IStyleRepository styleRepository,
-            IServiceRequestRepository serviceRequests)
+            IServiceRequestRepository serviceRequests,
+            ICartItemRepository cartItemRepository,
+            IWishlistItemRepository wishlistItemRepository)
         {
             _db = context;
             Users = userRepository;
@@ -33,6 +36,8 @@ namespace DataAccess.Repositories
             Categorys = categoryRepository;
             Styles = styleRepository;
             ServiceRequests = serviceRequests;
+            CartItems = cartItemRepository;
+            WishlistItems = wishlistItemRepository;
         }
 
 

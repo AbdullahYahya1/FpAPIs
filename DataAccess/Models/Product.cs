@@ -74,6 +74,7 @@ namespace DataAccess.Models
         public virtual ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
         public ProductStatus ProductStatus { get; set; }
         public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+        public virtual ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();
     }
 
 }

@@ -60,5 +60,6 @@ public class AppUser
     public virtual ICollection<ServiceRequest> ServiceRequests { get; set; }
     public virtual ICollection<UserAddress> Addresses { get; set; }
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+    public virtual ICollection<WishlistItem>  WishlistItems { get; set; } = new List<WishlistItem>();
 
 }

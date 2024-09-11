@@ -30,9 +30,8 @@ public class Order
     public string CustomerId { get; set; }
     public virtual AppUser Customer { get; set; }
 
-    [Required]
-    public int TransactionId { get; set; }
-    public virtual UserPurchaseTransaction Transaction { get; set; }
+    public int? TransactionId { get; set; }
+    public virtual UserPurchaseTransaction? Transaction { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -44,9 +43,7 @@ public class Order
     public ShippingStatus ShippingStatus { get; set; }
 
     public DateTime? ShippingDate { get; set; }
-
-    [StringLength(100)]
-    public string TrackingNumber { get; set; }
-
+    [Column(TypeName = "decimal(7, 2)")]
+    public decimal TotalPrice { get; set; }
     public virtual ICollection<OrderItem> OrderItems { get; set; }
 }

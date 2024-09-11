@@ -1,5 +1,6 @@
 ﻿using DataAccess.Context;
 using DataAccess.IRepositories;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DataAccess.Repositories
 {
@@ -16,6 +17,11 @@ namespace DataAccess.Repositories
         public ICartItemRepository CartItems { get; }
         public IWishlistItemRepository WishlistItems { get; }
         public IServiceRequestRepository ServiceRequests { get; }
+
+        public IUserAddressRepository UserAddresses { get; }
+
+        public IOrderRepository Orders { get; }
+
         public UnitOfWork(
             FPDbContext context,
             IUserRepository userRepository,
@@ -26,7 +32,9 @@ namespace DataAccess.Repositories
             IStyleRepository styleRepository,
             IServiceRequestRepository serviceRequests,
             ICartItemRepository cartItemRepository,
-            IWishlistItemRepository wishlistItemRepository)
+            IWishlistItemRepository wishlistItemRepository,
+            IUserAddressRepository userAddressRepository,
+            IOrderRepository orderRepository)
         {
             _db = context;
             Users = userRepository;
@@ -38,12 +46,19 @@ namespace DataAccess.Repositories
             ServiceRequests = serviceRequests;
             CartItems = cartItemRepository;
             WishlistItems = wishlistItemRepository;
+            UserAddresses = userAddressRepository;
+            Orders = orderRepository;
         }
 
 
         public async Task<int> SaveChangesAsync()
         {
             return await _db.SaveChangesAsync();
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _db.Database.BeginTransactionAsync();
         }
     }
 }

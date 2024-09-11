@@ -41,7 +41,13 @@ namespace DataAccess.Mapping
             CreateMap<ServiceImage, ImageDto>().ReverseMap();
             CreateMap<ServiceRequest, GetServiceDto>().ReverseMap();
 
-            CreateMap<CartItem, CartItemDto>().ReverseMap(); 
+            CreateMap<CartItem, CartItemDto>().ReverseMap();
+
+            CreateMap<UserAddress, PostAddressDto>().ReverseMap();
+            CreateMap<UserAddress, GetAddressDto>().ReverseMap();
+            CreateMap<OrderItem ,GetOrderItemDto>().ReverseMap();
+            CreateMap<Order, GetOrderItemDto>().ReverseMap();
+            CreateMap<WishlistItem, WishlistItemDto>().ReverseMap();
         }
     }
 }

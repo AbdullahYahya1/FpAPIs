@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Business.IServices;
+using Business.Services;
+using DataAccess.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,14 +12,21 @@ namespace FpAPIs.Controllers
     [Authorize]
     public class OrderController : ControllerBase
     {
+        private readonly IOrderService _orderService;
+
+        public OrderController(IOrderService orderService) {
+            _orderService = orderService;
+        }
         [HttpGet("GetOrders")]
         public async Task<IActionResult> GetOrders() {
-            return Ok();
+            var res = await _orderService.GetOrders();
+            return Ok(res);
         }
         [HttpPost("CreateOrder")]
-        public async Task<IActionResult> CreateOrder()
+        public async Task<IActionResult> CreateOrder(PostOrderDto postOrder)
         {
-            return Ok();
+            var res = await _orderService.AddOrder(postOrder); 
+            return Ok(res);
         }
     }
 }

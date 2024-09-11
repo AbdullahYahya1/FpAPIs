@@ -125,10 +125,15 @@ try
     builder.Services.AddScoped<IServiceRequestRepository, ServiceRequestRepository>();
 
     builder.Services.AddScoped<IWishlistItemRepository, WishlistItemRepository>();
-    builder.Services.AddScoped<IWishlistItemServices, WishlistItemServices>();
+    builder.Services.AddScoped<IWishlistItemService, WishlistItemService>();
     builder.Services.AddScoped<ICartItemService, CartItemService>();
     builder.Services.AddScoped<ICartItemRepository, CartItemRepository> ();
 
+    builder.Services.AddScoped<IOrderService, OrderService>();
+    builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+    builder.Services.AddScoped<IUserAddressRepository, UserAddressRepository>();
+    builder.Services.AddScoped<IUserAddressService, UserAddressService>();
+    
     #region HealthChecks
 
     builder.Services.AddHealthChecks()

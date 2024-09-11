@@ -35,6 +35,16 @@ namespace DataAccess.Repositories
 
             return items;
         }
+        public async Task RemoveCartItemsByProductIds(List<int> productIds)
+        {
+            var cartItems = _context.CartItems.Where(c => productIds.Contains(c.ProductId));
+            _context.CartItems.RemoveRange(cartItems);
+        }
 
+        public async Task RemoveCartItemsForUserByProductIds(string userId, List<int> productIds)
+        {
+            var cartItems = _context.CartItems.Where(c => c.UserId == userId && productIds.Contains(c.ProductId));
+            _context.CartItems.RemoveRange(cartItems);
+        }
     }
 }

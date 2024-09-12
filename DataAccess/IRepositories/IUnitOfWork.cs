@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,10 @@ namespace DataAccess.IRepositories
         ICartItemRepository CartItems { get; }
         IWishlistItemRepository WishlistItems { get; }
 
+        IUserAddressRepository UserAddresses{ get; }
+        IOrderRepository Orders { get; }
         Task<int> SaveChangesAsync();
+        Task<IDbContextTransaction> BeginTransactionAsync();
 
     }
 }

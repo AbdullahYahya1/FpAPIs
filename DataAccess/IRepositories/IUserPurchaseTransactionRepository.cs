@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.ResponseCaching;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.IRepositories
 {
-    public interface IOrderRepository:IRepository<Order>
+    public interface IUserPurchaseTransactionRepository:IRepository<UserPurchaseTransaction>
     {
-        Task<List<Order>> GetOrdersAsync(string customerId);
     }
 }

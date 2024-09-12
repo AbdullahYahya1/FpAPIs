@@ -4,13 +4,11 @@ using DataAccess.Context;
 using DataAccess.DTOs;
 using DataAccess.IRepositories;
 using DataAccess.Models;
-using DataAccess.Repositories;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Business.Services
@@ -63,7 +61,6 @@ namespace Business.Services
             {
                 try
                 {
-                    // Create a new order
                     var order = new Order()
                     {
                         ShippingAddressId = postOrder.ShippingAddressId,
@@ -71,13 +68,12 @@ namespace Business.Services
                         ShippingStatus = ShippingStatus.NotShipped,
                         Status = OrderStatus.Pending,
                         CreatedAt = DateTime.UtcNow,
-                        TotalPrice = 0
+                        TotalPrice = 0,
+                        OrderItems = new List<OrderItem>()
                     };
 
                     await _unitOfWork.Orders.AddAsync(order);
                     await _unitOfWork.SaveChangesAsync();
-
-                    // List to keep track of the product IDs in this order
                     List<int> productIdsInOrder = new List<int>();
 
                     // Process each cart item, deactivate product, and add order items
@@ -102,19 +98,16 @@ namespace Business.Services
                     await _unitOfWork.Orders.UpdateAsync(order);
                     await _unitOfWork.SaveChangesAsync();
 
-                    // Now we remove all cart items that contain any of the products in this order
+                    // Remove all cart items that contain any of the products in this order
                     // 1. Remove from other users' carts
                     await _unitOfWork.CartItems.RemoveCartItemsByProductIds(productIdsInOrder);
-
                     // 2. Remove from current user's cart
                     await _unitOfWork.CartItems.RemoveCartItemsForUserByProductIds(currentUserId, productIdsInOrder);
 
                     // Save changes for cart item deletions
                     await _unitOfWork.SaveChangesAsync();
-
                     // Commit the transaction to finalize the order
                     transaction.Commit();
-
                     // Map the order to the DTO for returning
                     var orderDto = _mapper.Map<GetOrderDto>(order);
                     return new ResponseModel<GetOrderDto>()
@@ -125,17 +118,26 @@ namespace Business.Services
                 }
                 catch (Exception ex)
                 {
-                    // Rollback transaction if something goes wrong
-                    transaction.Rollback();
-                    // Log the exception (consider adding a logging mechanism here)
-                    return new ResponseModel<GetOrderDto>() { IsSuccess = false, Message = "Failed to create the order."};
+                    if (transaction != null && transaction.GetDbTransaction()?.Connection != null)
+                    {
+                        transaction.Rollback();
+                    }
+
+                    return new ResponseModel<GetOrderDto>()
+                    {
+                        IsSuccess = false,
+                        Message = $"Failed to create the order. Error: {ex.Message}. StackTrace: {ex.StackTrace}"
+                    };
                 }
             }
         }
 
-        public Task<ResponseModel<List<GetOrderDto>>> GetOrders()
+        public async Task<ResponseModel<List<GetOrderDto>>> GetOrders()
         {
-            throw new NotImplementedException();
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+            var orders =await _unitOfWork.Orders.GetOrdersAsync(currentUserId);
+            var ordersDto = _mapper.Map<List<GetOrderDto>>(orders);
+            return new ResponseModel<List<GetOrderDto>> { Result = ordersDto, IsSuccess = true }; 
         }
     }
 }

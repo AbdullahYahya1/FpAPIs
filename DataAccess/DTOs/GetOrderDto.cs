@@ -14,7 +14,7 @@ namespace DataAccess.DTOs
         public DateTime CreatedAt { get; set; }
         public OrderStatus Status { get; set; }
         public int ShippingAddressId { get; set; }
-        public virtual UserAddress ShippingAddress { get; set; }
+        public virtual GetAddressDto ShippingAddress { get; set; }
         public ShippingStatus ShippingStatus { get; set; }
         public DateTime? ShippingDate { get; set; }
         [Column(TypeName = "decimal(7, 2)")]

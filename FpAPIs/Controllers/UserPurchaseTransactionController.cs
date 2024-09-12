@@ -5,7 +5,9 @@ namespace FpAPIs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    public class UserPurchaseTransactionController : ControllerBase
     {
+        public UserPurchaseTransactionController() { }
+ 
     }
 }

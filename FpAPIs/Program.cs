@@ -133,6 +133,10 @@ try
     builder.Services.AddScoped<IOrderRepository, OrderRepository>();
     builder.Services.AddScoped<IUserAddressRepository, UserAddressRepository>();
     builder.Services.AddScoped<IUserAddressService, UserAddressService>();
+
+    builder.Services.AddScoped<IUserPurchaseTransactionRepository, UserPurchaseTransactionRepository>();
+    builder.Services.AddScoped<IUserPurchaseTransactionService, UserPurchaseTransactionService>();
+
     
     #region HealthChecks
 

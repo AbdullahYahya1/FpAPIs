@@ -1,23 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System;
 
 public enum TransactionStatus
 {
-    Pending,
-    Completed,
-    Failed,
-    Refunded,
-    Cancelled
+    Payed,
+    Failed
 }
 
 public enum PaymentProvider
 {
-    CreditCard,
-    PayPal,
-    BankTransfer,
-    CashOnDelivery,
-    StoreCredit,
-    GiftCard
+    Visa,
+    MasterCard,
+    Mada,
+    Cash
 }
 
 public class UserPurchaseTransaction
@@ -30,17 +26,16 @@ public class UserPurchaseTransaction
     public string CreatedById { get; set; }
     public virtual AppUser CreatedBy { get; set; }
 
-    public DateTime TransactionDate { get; set; }
-    [Column(TypeName = "decimal(7, 2)")]
+    public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
+
+    [Column(TypeName = "decimal(10, 2)")] 
     public decimal TotalPrice { get; set; }
 
-    public TransactionStatus Status { get; set; }
+    public TransactionStatus TransactionStatus { get; set; }
 
     public PaymentProvider Provider { get; set; }
 
-    [StringLength(500)]
-    public string AccountDetails { get; set; }
+    [StringLength(64)]
+    public string CardholderName { get; set; }
 
-    [StringLength(1000)]
-    public string Notes { get; set; }
 }

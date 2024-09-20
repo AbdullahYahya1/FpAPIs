@@ -21,6 +21,8 @@ namespace DataAccess.IRepositories
 
         IUserAddressRepository UserAddresses{ get; }
         IOrderRepository Orders { get; }
+
+        IUserPurchaseTransactionRepository userPurchaseTransactions{ get; }
         Task<int> SaveChangesAsync();
         Task<IDbContextTransaction> BeginTransactionAsync();
 

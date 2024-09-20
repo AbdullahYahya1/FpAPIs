@@ -139,5 +139,37 @@ namespace Business.Services
             var ordersDto = _mapper.Map<List<GetOrderDto>>(orders);
             return new ResponseModel<List<GetOrderDto>> { Result = ordersDto, IsSuccess = true }; 
         }
+
+        public async Task<ResponseModel<GetOrderDto>> PayOrder(int OrderId, PayOrderDto payOrderDto)
+        {
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+            var orders =await _unitOfWork.Orders.GetOrdersAsync(currentUserId);
+            var order = orders.FirstOrDefault(O => O.OrderId == OrderId);
+            if(order == null)
+            {
+                return new ResponseModel<GetOrderDto>
+                {
+                    IsSuccess = false,
+                    Message = "No Order Found"
+                };
+            }
+            var transatction = new UserPurchaseTransaction()
+            {
+                CardholderName = payOrderDto.CardholderName,
+                CreatedById = currentUserId,
+                TotalPrice = order.TotalPrice,
+                TransactionDate = DateTime.UtcNow,
+                Provider= payOrderDto.Cash? PaymentProvider.Cash  : PaymentProvider.Visa ,
+                TransactionStatus=TransactionStatus.Payed
+            };
+            await _unitOfWork.userPurchaseTransactions.AddAsync(transatction);
+            await _unitOfWork.SaveChangesAsync();
+            order.TransactionId = transatction.TransactionId;
+            order.Status = OrderStatus.Processing;
+            await _unitOfWork.Orders.UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();   
+            var orderDto = _mapper.Map<GetOrderDto>(order);
+            return new ResponseModel<GetOrderDto> { IsSuccess = true, Result = orderDto };
+        }
     }
 }

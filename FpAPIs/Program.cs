@@ -86,6 +86,17 @@ try
         });
     });
     builder.Services.AddTransient<IEmailSender, EmailSender>();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigin",
+            policyBuilder => policyBuilder.WithOrigins("http://localhost:4200")
+                                          .AllowAnyHeader()     
+                                          .AllowAnyMethod()
+                                          .AllowCredentials());
+    });
+
+    builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri("https://localhost:4200") });
+
     builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
@@ -170,7 +181,7 @@ try
 
     app.MapControllers();
     app.UseStaticFiles();
-
+    app.UseCors("AllowSpecificOrigin");
     //hangfire
     app.Lifetime.ApplicationStarted.Register(() =>
     {

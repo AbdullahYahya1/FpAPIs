@@ -11,6 +11,7 @@ namespace Business.IServices
     public interface IProductService : IService<Product>
     {
         Task<ResponseModel<Product>> CreateProduct(PostProdcutDto postProdcutDto);
+
         Task<ResponseModel<List<GetProductDto>>> GetProducts(paginationDto paginationDto);
         Task<ResponseModel<GetProductDto>> GetProduct(int productId);
 

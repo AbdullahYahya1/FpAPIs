@@ -28,5 +28,11 @@ namespace FpAPIs.Controllers
             var res = await _orderService.AddOrder(postOrder); 
             return Ok(res);
         }
+        [HttpPost("Pay/{OrderId}")]
+        public async Task<IActionResult> Pay( [FromRoute] int OrderId , [FromBody] PayOrderDto payOrderDto)
+        {
+            var res = await _orderService.PayOrder(OrderId, payOrderDto);
+            return Ok(res);
+        }
     }
 }

@@ -48,6 +48,7 @@ namespace DataAccess.Mapping
             CreateMap<OrderItem ,GetOrderItemDto>().ReverseMap();
             CreateMap<Order, GetOrderDto>().ReverseMap();
             CreateMap<WishlistItem, WishlistItemDto>().ReverseMap();
+            CreateMap<UserPurchaseTransaction, GetUserPurchaseTransactionDto>().ReverseMap();
         }
     }
 }

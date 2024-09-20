@@ -22,6 +22,8 @@ namespace DataAccess.Repositories
 
         public IOrderRepository Orders { get; }
 
+        public IUserPurchaseTransactionRepository userPurchaseTransactions { get; }
+
         public UnitOfWork(
             FPDbContext context,
             IUserRepository userRepository,
@@ -34,7 +36,9 @@ namespace DataAccess.Repositories
             ICartItemRepository cartItemRepository,
             IWishlistItemRepository wishlistItemRepository,
             IUserAddressRepository userAddressRepository,
-            IOrderRepository orderRepository)
+            IOrderRepository orderRepository
+            ,
+            IUserPurchaseTransactionRepository userPurchaseTransactionsRepository)
         {
             _db = context;
             Users = userRepository;
@@ -48,6 +52,7 @@ namespace DataAccess.Repositories
             WishlistItems = wishlistItemRepository;
             UserAddresses = userAddressRepository;
             Orders = orderRepository;
+            userPurchaseTransactions = userPurchaseTransactionsRepository;
         }
 
 

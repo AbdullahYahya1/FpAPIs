@@ -38,6 +38,7 @@ namespace DataAccess.Repositories
             .Include(o => o.OrderItems)
                 .ThenInclude(OI => OI.Product)
                     .ThenInclude(P => P.Category)
+            .Include(o => o.Transaction)
             .Where(o => o.CustomerId == customerId)
             .ToListAsync();
         }

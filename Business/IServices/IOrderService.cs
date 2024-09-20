@@ -12,5 +12,6 @@ namespace Business.IServices
     {
         Task<ResponseModel<GetOrderDto>> AddOrder(PostOrderDto postOrder);
         Task<ResponseModel<List<GetOrderDto>>> GetOrders();
+        Task<ResponseModel<GetOrderDto>> PayOrder(int OrderId, PayOrderDto payOrderDto);
     }
 }

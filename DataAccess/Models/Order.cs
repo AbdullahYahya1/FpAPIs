@@ -3,21 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 public enum OrderStatus
 {
-    Pending,
-    Processing,
-    Shipped,
-    Delivered,
-    Cancelled,
-    Returned
+    Processing=0,
+    Complete=1,
+    Cancelled=2,
+    Returned=3
 }
 
 public enum ShippingStatus
 {
-    NotShipped,
-    InTransit,
-    OutForDelivery,
-    Delivered,
-    FailedDelivery
+    NotShipped=0,
+    InTransit=1,
+    OutForDelivery=2,
+    Delivered=3,
+    FailedDelivery=4
 }
 
 public class Order

@@ -4,19 +4,19 @@ using DataAccess.Models;
 
 public enum ServiceRequestStatus
 {
-    New,
-    InProgress,
-    Resolved,
-    Closed,
-    Rejected
+    New=0,
+    InProgress=1,
+    Resolved=2,
+    Closed=3,
+    Rejected=4
 }
 
 public enum RequestType
 {
-    Repair,
-    Return,
-    Sell,
-    buy
+    Repair=0,
+    Return=1,
+    Sell=2,
+    buy=3
 }
 
 public class ServiceRequest

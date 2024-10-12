@@ -9,5 +9,6 @@ namespace DataAccess.IRepositories
     public interface IOrderRepository:IRepository<Order>
     {
         Task<List<Order>> GetOrdersAsync(string customerId);
+        Task<List<Order>> GetAllOrders();
     }
 }

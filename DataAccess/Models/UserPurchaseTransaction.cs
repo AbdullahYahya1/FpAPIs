@@ -4,16 +4,15 @@ using System;
 
 public enum TransactionStatus
 {
-    Payed,
-    Failed
+    Payed=0,
+    Failed=1
 }
 
 public enum PaymentProvider
 {
-    Visa,
-    MasterCard,
-    Mada,
-    Cash
+    Visa=0,
+    MasterCard=1,
+    Mada=2,
 }
 
 public class UserPurchaseTransaction

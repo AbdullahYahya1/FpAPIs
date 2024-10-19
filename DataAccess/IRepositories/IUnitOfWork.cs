@@ -18,10 +18,8 @@ namespace DataAccess.IRepositories
         IServiceRequestRepository ServiceRequests { get; }
         ICartItemRepository CartItems { get; }
         IWishlistItemRepository WishlistItems { get; }
-
         IUserAddressRepository UserAddresses{ get; }
         IOrderRepository Orders { get; }
-
         IUserPurchaseTransactionRepository userPurchaseTransactions{ get; }
         Task<int> SaveChangesAsync();
         Task<IDbContextTransaction> BeginTransactionAsync();

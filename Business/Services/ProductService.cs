@@ -205,5 +205,28 @@ namespace Business.Services
             }
         }
 
+        public async Task<ResponseModel<bool>> Delete(int productId)
+        {
+            var product =await _unitOfWork.Products.GetProductAllWithIncludesAsync(productId);
+            if (product == null)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ProductNotFound" };
+            }
+            if (product.ProductStatus != ProductStatus.Active)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ProductIsNotActive" };
+            }
+            foreach (var item in product.CartItems)
+            {
+                product.CartItems.Remove(item); 
+            }
+            foreach (var item in product.WishlistItems)
+            {
+                product.WishlistItems.Remove(item);
+            }
+            product.ProductStatus = ProductStatus.Inactive;
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
+        }
     }
 }

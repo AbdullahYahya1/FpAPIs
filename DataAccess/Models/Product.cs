@@ -67,8 +67,6 @@ namespace DataAccess.Models
 
         [Column(TypeName = "decimal(7, 2)")]
         public decimal Price { get; set; }
-
-
         public int BrandId { get; set; }
         public virtual Brand Brand { get; set; }
         public virtual ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
@@ -76,5 +74,4 @@ namespace DataAccess.Models
         public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
         public virtual ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();
     }
-
 }

@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataAccess.Models;
 
 namespace DataAccess.DTOs
 {
-    public class GetOneUserDto
+    public class PostDriverDto
     {
-        public string UserId { get; set; }
         public string Email { get; set; }
-        public UserType UserType { get; set; }
+        public string Password { get; set; }
         public string UserName { get; set; }
-        public bool IsActive { get; set; }
         public string MobileNumber { get; set; }
     }
 }

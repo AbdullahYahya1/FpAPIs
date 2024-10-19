@@ -31,19 +31,6 @@ namespace DataAccess.Context
         {
             base.OnModelCreating(builder);
 
-            // Configure self-referencing relationship for AppUser
-            builder.Entity<AppUser>()
-                .HasOne(u => u.CreatedBy)
-                .WithMany()
-                .HasForeignKey(u => u.CreatedById)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<AppUser>()
-                .HasOne(u => u.UpdateBy)
-                .WithMany()
-                .HasForeignKey(u => u.UpdateById)
-                .OnDelete(DeleteBehavior.Restrict);
-
             // Configure relationships and constraints
 
              builder.Entity<Product>()

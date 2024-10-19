@@ -18,6 +18,7 @@ using DataAccess.DTOs;
 using DataAccess.Models;
 using DataAccess.IRepositories;
 using DataAccess.Context;
+using Hangfire.MemoryStorage.Dto;
 namespace Business.Services
 {
     public class UserService : Service<AppUser>, IUserService
@@ -72,15 +73,6 @@ namespace Business.Services
 
                 var UserD = _mapper.Map<GetOneUserDto>(user);
                 var tokens = await GenerateTokens(user);
-
-                var base64 = "";
-                if (!string.IsNullOrEmpty(user.UserImageURL) && File.Exists(user.UserImageURL))
-                {
-                    byte[] imageBytes = await File.ReadAllBytesAsync(user.UserImageURL);
-                    base64 = Convert.ToBase64String(imageBytes);
-                }
-                UserD.Base64Image = base64;
-
                 return new ResponseModel<AuthenticationResponse>
                 {
                     IsSuccess = true,
@@ -255,20 +247,9 @@ namespace Business.Services
 
                 var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
                 var type = _httpContextAccessor.HttpContext.User?.FindFirst("UserType")?.Value;
-                string imageUrl = "";
-                if (!string.IsNullOrEmpty(userDto.Base64Image))
-                {
-                    var imageBytes = Convert.FromBase64String(userDto.Base64Image);
-                    var imagePath = Path.Combine("wwwroot", "images", $"{Guid.NewGuid()}.jpg");
-                    await System.IO.File.WriteAllBytesAsync(imagePath, imageBytes);
-                    imageUrl = Path.Combine("wwwroot", "images", Path.GetFileName(imagePath));
-                }
                 var user = _mapper.Map<AppUser>(userDto);
                 user.Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
                 user.DateCreated = DateTime.UtcNow;
-                user.UpdateDate = DateTime.UtcNow;
-                user.CreatedById = currentUserId;
-                user.UserImageURL = imageUrl;
                 user.IsActive = true;
                 if (string.IsNullOrEmpty(currentUserId))
                 {
@@ -300,15 +281,7 @@ namespace Business.Services
                 if (user == null)
                     return new ResponseModel<GetOneUserDto> { IsSuccess = false, Message = "UserNotFound" };
 
-                var base64 = "";
-
-                if (!string.IsNullOrEmpty(user.UserImageURL) && File.Exists(user.UserImageURL))
-                {
-                    byte[] imageBytes = await File.ReadAllBytesAsync(user.UserImageURL);
-                    base64 = Convert.ToBase64String(imageBytes);
-                }
                 var UserDTO = _mapper.Map<GetOneUserDto>(user);
-                UserDTO.Base64Image = base64;
                 return new ResponseModel<GetOneUserDto> { IsSuccess = true, Result = UserDTO, Message = string.Empty };
             }
             catch (Exception ex)
@@ -340,18 +313,8 @@ namespace Business.Services
                 {
                     return new ResponseModel<bool> { IsSuccess = false, Message = "UsernameInUse" };
                 }
-                string imageUrl = "";
-                if (!string.IsNullOrEmpty(userDto.Base64Image))
-                {
-                    var imageBytes = Convert.FromBase64String(userDto.Base64Image);
-                    var imagePath = Path.Combine("wwwroot", "images", $"{Guid.NewGuid()}.jpg");
-                    await System.IO.File.WriteAllBytesAsync(imagePath, imageBytes);
-                    imageUrl = Path.Combine("wwwroot", "images", Path.GetFileName(imagePath));
-                    currentUser.UserImageURL = imageUrl;
-                }
                 _mapper.Map(userDto, currentUser);
-                currentUser.UpdateDate = DateTime.UtcNow;
-                currentUser.UpdateById = currentUserId;
+
 
                 await _unitOfWork.Users.UpdateUser(currentUser);
                 return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
@@ -374,7 +337,6 @@ namespace Business.Services
                 }
 
                 user.IsActive = !user.IsActive;
-                user.UpdateDate = DateTime.UtcNow;
                 await _unitOfWork.Users.UpdateUser(user);
 
                 return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
@@ -423,7 +385,7 @@ namespace Business.Services
         }
 
 
- 
+
         public async Task<ResponseModel<bool>> ForgetPassword(ForgetPasswordDto forgetPasswordDto)
         {
             try
@@ -568,6 +530,100 @@ namespace Business.Services
         {
             var rng = new Random();
             return rng.Next(100000, 999999).ToString();
+        }
+
+        public async Task<ResponseModel<AuthenticationResponse>> CustomerAuthenticate(string phone, string password)
+        {
+            try
+            {
+                var user = await _unitOfWork.Users.GetUserByMobileNumber(phone);
+
+                if (user == null)
+                {
+                    return new ResponseModel<AuthenticationResponse>
+                    {
+                        IsSuccess = false,
+                        Message = "UserNotFound"
+                    };
+                }
+                if (user.Password == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+                {
+                    return new ResponseModel<AuthenticationResponse>
+                    {
+                        IsSuccess = false,
+                        Message = "InvalidPasswordOrNullPassword"
+                    };
+                }
+                var UserD = _mapper.Map<GetOneUserDto>(user);
+                var tokens = await GenerateTokens(user);
+                return new ResponseModel<AuthenticationResponse>
+                {
+                    IsSuccess = true,
+                    Result = new AuthenticationResponse
+                    {
+                        Tokens = tokens.Result,
+                        User = UserD
+                    },
+                    Message = string.Empty
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during authentication.");
+                return new ResponseModel<AuthenticationResponse>
+                {
+                    IsSuccess = false,
+                    Message = "ErrorFound"
+                };
+            }
+        }
+
+        public async Task<ResponseModel<bool>> CreateCustomerUser(PostCustomerUserDto userDto)
+        {
+            try
+            {
+                var existingUser = await _unitOfWork.Users.GetUserByMobileNumber(userDto.Phone);
+                if (existingUser != null)
+                {
+                    return new ResponseModel<bool> { IsSuccess = false, Message = "UserAlreadyExists" };
+                }
+                var user = _mapper.Map<AppUser>(userDto);
+                user.Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+                user.UserType = UserType.Client;
+                await _unitOfWork.Users.CreateUser(user);
+                return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating the user.");
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ErrorFound", Result = false };
+            }
+        }
+
+        public async Task<ResponseModel<List<LookUpDataModel<string>>>> DriversUsersLookUp()
+        {
+            var rse = await _unitOfWork.Users.getUsersByType(UserType.DeliveryRepresentative);
+            var result = rse.Select(enumValue => new LookUpDataModel<string>
+            {
+                Value = enumValue.UserId,
+                NameAr = enumValue.UserName,
+                NameEn = enumValue.UserName
+            }).ToList();
+            return new ResponseModel<List<LookUpDataModel<string>>> { Result = result, IsSuccess = true };
+        }
+
+        public async Task<ResponseModel<bool>> AddDriver(PostDriverDto postDriverDto)
+        {
+            var existingUser = await _unitOfWork.Users.GetUserByMobileNumber(postDriverDto.MobileNumber);
+            if (existingUser != null)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "UserAlreadyExists" };
+            }
+            var user = _mapper.Map<AppUser>(postDriverDto);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(postDriverDto.Password);
+            user.UserType = UserType.DeliveryRepresentative;
+            await _unitOfWork.Users.CreateUser(user);
+            return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
         }
     }
 

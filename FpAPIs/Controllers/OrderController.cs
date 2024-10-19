@@ -34,5 +34,11 @@ namespace FpAPIs.Controllers
             var res = await _orderService.PayOrder(OrderId, payOrderDto);
             return Ok(res);
         }
+        [HttpPost("AssignDriver/{UserId}/Order/{OrderId}")]
+        public async Task<IActionResult> AssignDriver([FromRoute] int OrderId, [FromRoute] string UserId)
+        {
+            var res = await _orderService.AssignDriver(OrderId, UserId);
+            return Ok(res);
+        }
     }
 }

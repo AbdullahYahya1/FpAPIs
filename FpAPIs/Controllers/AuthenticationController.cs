@@ -27,6 +27,18 @@ public class AuthenticationController : ControllerBase
         var tokens = await _userService.Authenticate(model.EmailORUserName, model.Password);
         return Ok(tokens);
     }
+    [HttpPost("Customer/Login")]
+    public async Task<IActionResult> CustomerLogin([FromBody] CustomerAuthenticateDto model)
+    {
+        var tokens = await _userService.CustomerAuthenticate(model.Phone, model.Password);
+        return Ok(tokens);
+    }
+    [HttpPost("Customer/Register")]
+    public async Task<IActionResult> CustomerRegister([FromBody] PostCustomerUserDto userDto)
+    {
+        var res = await _userService.CreateCustomerUser(userDto);
+        return Ok(res);
+    }
 
     [HttpPost("RefreshToken")]
     public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)

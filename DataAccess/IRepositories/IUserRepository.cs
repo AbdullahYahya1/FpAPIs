@@ -14,5 +14,8 @@ namespace DataAccess.IRepositories
         Task<AppUser> GetUserByEmail(string email);
         Task<AppUser> GetUserByName(string Name);
         Task<IEnumerable<AppUser>> GetClientsWithTicketsAsync();
+        Task<AppUser> GetUserByMobileNumber(string email);
+        Task<AppUser> getUserById(string id);
+        Task<List<AppUser>> getUsersByType(UserType type);
     }
 }

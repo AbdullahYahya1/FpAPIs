@@ -111,6 +111,25 @@ namespace Business.Services
             }
         }
 
+        public async Task<ResponseModel<bool>> AssignDriver(int OrderId, string UserId)
+        {
+            var order = await _unitOfWork.Orders.GetByIdAsync(OrderId);
+            if (order == null)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "Order not found" };
+            }
+            var driver = await _unitOfWork.Users.getUserById(UserId);
+            if (driver == null || driver.UserType != UserType.DeliveryRepresentative)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "Invalid driver" };
+            }
+            order.DriverId = driver.UserId;
+            order.ShippingStatus = ShippingStatus.InTransit;
+            await _unitOfWork.Orders.UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
+        }
+
         public async Task<ResponseModel<List<GetOrderDto>>> GetOrders()
         {
             var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;

@@ -11,5 +11,7 @@ namespace DataAccess.Models
         public T Value { get; set; }
         public string NameAr { get; set; }
         public string NameEn { get; set; }
+
+
     }
 }

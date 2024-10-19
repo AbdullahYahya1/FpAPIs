@@ -21,12 +21,7 @@ namespace FpAPIs.Controllers
             var res = await _productService.SearchProducts(productSearchDto);
             return Ok(res); 
         }
-        [HttpGet("GetProducts")]
-        public async Task<IActionResult> GetProducts( [FromQuery] paginationDto paginationDto)
-        {
-            var res = await _productService.GetProducts(paginationDto);
-            return Ok(res);
-        }
+
         [HttpGet("GetProduct/{productId}")]
         public async Task<IActionResult> GetProducts(int productId)
         {
@@ -39,7 +34,12 @@ namespace FpAPIs.Controllers
             var res = await _productService.CreateProduct(postProdcutDto);
             return Ok(res);
         }
-
+        [HttpPost("DeactivateProduct/{productId}")]
+        public async Task<IActionResult> RemoveProduct(int productId)
+        {
+            var res = await _productService.Delete(productId);
+            return Ok(res);
+        }
         [HttpPost("AddBrand")]
         public async Task<IActionResult> AddBrand(PostBrandDto brandDto)
         {

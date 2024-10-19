@@ -74,5 +74,19 @@ namespace DataAccess.Repositories
                 .Where(u => u.UserType == UserType.Client).ToListAsync();
         }
 
+        public async Task<AppUser> GetUserByMobileNumber(string MobileNumber)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.MobileNumber== MobileNumber);
+        }
+
+        public async Task<AppUser> getUserById(string id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+        }
+
+        public Task<List<AppUser>> getUsersByType(UserType type)
+        {
+            return _context.Users.Where(u => u.UserType == type).ToListAsync();
+        }
     }
 }

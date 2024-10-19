@@ -40,6 +40,7 @@ public class Order
 
     public ShippingStatus ShippingStatus { get; set; }
 
+    public string? DriverId { get; set; }
     public DateTime? ShippingDate { get; set; }
     [Column(TypeName = "decimal(7, 2)")]
     public decimal TotalPrice { get; set; }

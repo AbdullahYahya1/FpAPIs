@@ -55,7 +55,49 @@ namespace Business.Services
             return new ResponseModel<Product> { IsSuccess = true, Result = product };
         }
 
+        public async Task<ResponseModel<bool>> UpdateProduct(int productId, PostProdcutDto updateProductDto)
+        {
+            var product = await _unitOfWork.Products.GetProductWithImageIncludesAsync(productId);
+            if (product == null)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ProductNotFound" };
+            }
+            _mapper.Map(updateProductDto, product);
+            await _unitOfWork.Products.UpdateAsync(product);
+            await _unitOfWork.SaveChangesAsync();
 
+
+            if (updateProductDto.ImagesString64 != null && updateProductDto.ImagesString64.Any())
+            {
+                var imagesToRemove = product.Images.ToList();
+                foreach (var item in imagesToRemove)
+                {
+                    var imagePath = Path.Combine("wwwroot", item.ImageUrl);
+                    if (File.Exists(imagePath))
+                    {
+                        File.Delete(imagePath); 
+                    }
+                    product.Images.Remove(item);
+                }
+                foreach (var img in updateProductDto.ImagesString64)
+                {
+                    var imageBytes = Convert.FromBase64String(img);
+                    var uniqueFileName = $"{Guid.NewGuid()}.jpg";
+                    var physicalPath = Path.Combine("wwwroot", "images", uniqueFileName);
+                    await System.IO.File.WriteAllBytesAsync(physicalPath, imageBytes);
+                    var relativeImagePath = Path.Combine("images", uniqueFileName).Replace("\\", "/");
+                    var productImage = new ProductImage
+                    {
+                        ImageUrl = relativeImagePath,
+                        ProductId = product.ProductId
+                    };
+                    product.Images.Add(productImage);
+                }
+            }
+            await _unitOfWork.Products.UpdateAsync(product);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
+        }
 
         public async Task<ResponseModel<bool>> CreateProdcutBrand(PostBrandDto brandPostDto)
         {
@@ -228,5 +270,7 @@ namespace Business.Services
             await _unitOfWork.SaveChangesAsync();
             return new ResponseModel<bool> { IsSuccess = true, Result = true };
         }
+
+  
     }
 }

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataAccess.DTOs
 {
-    public class CustomerAuthenticateDto
+    public class OrdersByStatusDTO
     {
-        public string Phone { get; set; }
+        public string Status { get; set; }
+        public int TotalOrders { get; set; }
     }
+
 }

@@ -3,6 +3,7 @@ using DataAccess.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,5 +17,6 @@ namespace Business.IServices
         Task<ResponseModel<GetServiceDto>> GetServicesByID(int ServiceId);
         Task<ResponseModel<List<LookUpDataModel<int>>>> ProductServiceRequestStatusLookup();
         Task<ResponseModel<List<LookUpDataModel<int>>>> ProductRequestTypeLookup();
+        Task<ResponseModel<bool>> ResponseToRequest(int RequestId, UpdateRequestDto updateRequestDto);
     }
 }

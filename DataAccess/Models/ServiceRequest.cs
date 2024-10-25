@@ -7,8 +7,7 @@ public enum ServiceRequestStatus
     New=0,
     InProgress=1,
     Resolved=2,
-    Closed=3,
-    Rejected=4
+    Rejected=3
 }
 
 public enum RequestType
@@ -16,7 +15,7 @@ public enum RequestType
     Repair=0,
     Return=1,
     Sell=2,
-    buy=3
+    Dontate = 3
 }
 
 public class ServiceRequest
@@ -39,12 +38,8 @@ public class ServiceRequest
     [Column(TypeName = "decimal(7, 2)")]
     public decimal? PurchasePrice { get; set; }
     public ServiceRequestStatus ServiceRequestStatus { get; set; }
-
     public DateTime SubmissionDate { get; set; }
-
     public DateTime? ResponseDate { get; set; }
-
-
     [StringLength(2000)]
     public string? ResponseDetails { get; set; }
     public virtual ICollection<ServiceImage> Images { get; set; } = new List<ServiceImage>();

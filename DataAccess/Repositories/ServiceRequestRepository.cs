@@ -19,19 +19,19 @@ namespace DataAccess.Repositories
 
         public async Task<List<ServiceRequest>> GetAllWithImgsAsync()
         {
-            var serviceRequsts = await _context.ServiceRequests.Include(S => S.Images).ToListAsync();
+            var serviceRequsts = await _context.ServiceRequests.Include(S => S.Images).Include(s=>s.CreatedBy).ToListAsync();
             return serviceRequsts;
         }
 
         public async Task<List<ServiceRequest>> GetAllWithImgsAsyncByUserId(string UserId)
         {
-            var serviceRequsts = await _context.ServiceRequests.Include(S => S.Images).Where(S=>S.CreatedById==UserId).ToListAsync();
+            var serviceRequsts = await _context.ServiceRequests.Include(S => S.Images).Include(s => s.CreatedBy).Where(S=>S.CreatedById==UserId).ToListAsync();
             return serviceRequsts;
         }
 
         public async Task<ServiceRequest> GetServiceWithImgsByServiceId(int ServiceID)
         {
-            var serviceRequsts = await _context.ServiceRequests.Include(S => S.Images).FirstOrDefaultAsync(S => S.RequestId == ServiceID);
+            var serviceRequsts = await _context.ServiceRequests.Include(S => S.Images).Include(s => s.CreatedBy).FirstOrDefaultAsync(S => S.RequestId == ServiceID);
             return serviceRequsts;
         }
     }

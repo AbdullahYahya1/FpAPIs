@@ -34,6 +34,12 @@ namespace FpAPIs.Controllers
             var res = await _productService.CreateProduct(postProdcutDto);
             return Ok(res);
         }
+        [HttpPut("UpdateProduct/{ProductId}")]
+        public async Task<IActionResult> UpdateProduct([FromRoute] int ProductId, PostProdcutDto updateProductDto)
+        {
+            var res = await _productService.UpdateProduct(ProductId, updateProductDto);
+            return Ok(res);
+        }
         [HttpPost("DeactivateProduct/{productId}")]
         public async Task<IActionResult> RemoveProduct(int productId)
         {

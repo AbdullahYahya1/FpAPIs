@@ -30,6 +30,14 @@ namespace DataAccess.Repositories
                 .FirstOrDefaultAsync(p=>p.ProductId == productId);
             return product;
         }
+        public async Task<Product> GetProductWithImageIncludesAsync(int productId)
+        {
+            var product = await _context.Products
+                .AsNoTracking()
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.ProductId == productId);
+            return product;
+        }
         public async Task<List<Product>> GetAllWithIncludesAsync(paginationDto paginationDto)
         {
             var skip = (paginationDto.PageNumber - 1) * paginationDto.PageSize;

@@ -74,7 +74,8 @@ namespace Business.Services
                  services = await _unitOfWork.ServiceRequests.GetAllWithImgsAsyncByUserId(currentUserId);
             }
             var servicesDto =_mapper.Map<List<GetServiceDto>>(services);
-
+            var user = await _unitOfWork.Users.getUserById(currentUserId);
+            servicesDto.ForEach(s => s.UserPhone= user.MobileNumber);
             return new ResponseModel<List<GetServiceDto>> { IsSuccess = true, Result = servicesDto };
         }
 
@@ -103,7 +104,6 @@ namespace Business.Services
             {
                 return new ResponseModel<List<LookUpDataModel<int>>>
                 {
-                    Result = new List<LookUpDataModel<int>>(),
                     IsSuccess = false,
                     Message = "ErrorFound"
                 };
@@ -128,11 +128,25 @@ namespace Business.Services
             {
                 return new ResponseModel<List<LookUpDataModel<int>>>
                 {
-                    Result = new List<LookUpDataModel<int>>(),
                     IsSuccess = false,
                     Message = "ErrorFound"
                 };
             }
         }
+
+        public async Task<ResponseModel<bool>> ResponseToRequest(int RequestId, UpdateRequestDto updateRequestDto)
+        {
+            var service = await _unitOfWork.ServiceRequests.GetByIdAsync(RequestId);
+            if (service == null)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ServiceNotFound" };
+            }
+            service.ServiceRequestStatus = updateRequestDto.ServiceRequestStatus;
+            service.ResponseDate = DateTime.Now;
+            service.ResponseDetails = updateRequestDto.ResponseDetails;
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> {IsSuccess = true};
+        }
+
     }
 }

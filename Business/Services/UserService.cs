@@ -625,6 +625,50 @@ namespace Business.Services
             await _unitOfWork.Users.CreateUser(user);
             return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
         }
-    }
 
+        public async Task<ResponseModel<AuthenticationResponse>> CustomerAuthenticate(string phone)
+        {
+            var user = await _unitOfWork.Users.GetUserByMobileNumber(phone);
+            if (user == null)
+            {
+                user = new AppUser
+                {
+                    MobileNumber = phone,
+                    UserType = UserType.Client
+                };
+                user.IsActive = true;
+                await _unitOfWork.Users.CreateUser(user);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            if (user.UserType != UserType.Client)
+            {
+                return new ResponseModel<AuthenticationResponse>
+                {
+                    IsSuccess = false,
+                    Message = "InvalidUserType"
+                };
+            }
+            var UserD = _mapper.Map<GetOneUserDto>(user);
+            var newAccessToken = GenerateJwtToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _unitOfWork.Users.UpdateUser(user);
+            return new ResponseModel<AuthenticationResponse>
+            {
+                IsSuccess = true,
+                Result = new AuthenticationResponse
+                {
+                    Tokens = new TokenResponse
+                    {
+                        AccessToken = newAccessToken,
+                        RefreshToken = newRefreshToken
+                    },
+                    User = UserD
+                },
+                Message = string.Empty
+            };
+        }
+    }
 }
+

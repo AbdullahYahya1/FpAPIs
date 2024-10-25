@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataAccess.DTOs
 {
-    public class CustomerAuthenticateDto
+    public class UpdateRequestDto
     {
-        public string Phone { get; set; }
+        public string? ResponseDetails { get; set; }
+        public ServiceRequestStatus ServiceRequestStatus { get; set; }
     }
 }

@@ -25,6 +25,8 @@ namespace Business.IServices
         Task<ResponseModel<IEnumerable<GetUserDto>>> GetAllUsersAsync(UserType? type = null);
         Task<ResponseModel<bool>> ResetPassword(ResetPasswordDto resetPasswordDto);
         Task<ResponseModel<bool>> ForgetPassword(ForgetPasswordDto forgetPasswordDto);
+        Task<ResponseModel<AuthenticationResponse>> CustomerAuthenticate(string phone);
+
         Task<ResponseModel<List<LookUpDataModel<string>>>> DriversUsersLookUp();
 
     }

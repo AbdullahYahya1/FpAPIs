@@ -17,22 +17,25 @@ namespace DataAccess.Mapping
             CreateMap<AppUser, PutUserDto>().ReverseMap();
             CreateMap<AppUser, PostUserDto>().ReverseMap();
             CreateMap<AppUser, GetOneUserDto>().ReverseMap();
+            CreateMap<AppUser, PostCustomerUserDto>().ReverseMap();
+            CreateMap<AppUser, PostDriverDto>().ReverseMap();
+            CreateMap<AppUser, GetUserPhoneDto>().ReverseMap();
 
 
             CreateMap<Product, PostProdcutDto>().ReverseMap();
 
         
             CreateMap<Brand, PostBrandDto>().ReverseMap();
-
+            CreateMap<Brand, GetBrandDto>().ReverseMap();
 
             CreateMap<Style,PostStyleDto>().ReverseMap();
-
+            CreateMap<Style,GetStyleDto>().ReverseMap();
 
             CreateMap<Material,PostMaterialDto>().ReverseMap();
-
+            CreateMap<Material, GetMaterialDto>().ReverseMap();
 
             CreateMap<Category,PostCategoryDto>().ReverseMap();
-
+            CreateMap<Category, GetCategoryDto>().ReverseMap();
 
             CreateMap<Product, GetProductDto>().ReverseMap();
             CreateMap<ProductImage, ImageDto>().ReverseMap();

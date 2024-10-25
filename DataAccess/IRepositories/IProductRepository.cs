@@ -13,5 +13,7 @@ namespace DataAccess.IRepositories
         Task<List<Product>> GetAllWithIncludesAsync(paginationDto paginationDto);
         Task<List<Product>> SearchAsync(ProductSearchDto productSearchDto);
         Task<Product> GetProductAllWithIncludesAsync(int productId);
+        Task<Product> GetProductWithImageIncludesAsync(int productId);
+
     }
 }

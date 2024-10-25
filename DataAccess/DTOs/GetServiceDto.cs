@@ -12,8 +12,7 @@ namespace DataAccess.DTOs
     public class GetServiceDto
     {
         public int RequestId { get; set; }
-        public string CreatedById { get; set; }
-        public virtual AppUser CreatedBy { get; set; }
+        public string UserPhone { get; set; }
         public RequestType RequestType { get; set; }
         public string ProductDetails { get; set; }
         [Column(TypeName = "decimal(7, 2)")]

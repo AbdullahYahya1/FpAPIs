@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.DTOs
+namespace Business.IServices
 {
-    public class CustomerAuthenticateDto
+    public interface IstatService
     {
-        public string Phone { get; set; }
     }
 }

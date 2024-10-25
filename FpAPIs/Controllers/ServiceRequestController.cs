@@ -36,6 +36,13 @@ namespace FpAPIs.Controllers
             var res = await _serviceRequest.CreateService(serviceDto);
             return Ok(res); 
         }
+        [HttpPut("ResponseToRequest/{RequestId}")]
+        public async Task<IActionResult> ResponseToRequest(int RequestId, UpdateRequestDto updateRequestDto)
+        {
+            var res = await _serviceRequest.ResponseToRequest(RequestId, updateRequestDto);
+            return Ok(res);
+        }
+
         [HttpGet("ProductRequestTypeLookup")]
         public async Task<IActionResult> ProductRequestTypeLookup()
         {

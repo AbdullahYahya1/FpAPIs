@@ -29,19 +29,31 @@ namespace Business.Services
 
         }
         public async Task<ResponseModel<bool>> AddAddress(PostAddressDto postAddressDto){
+            try { 
             var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
             //var type = _httpContextAccessor.HttpContext.User?.FindFirst("UserType")?.Value;
             var UserAdress = _mapper.Map<UserAddress>(postAddressDto);
             UserAdress.UserId = currentUserId;
             await _unitOfWork.UserAddresses.AddAsync(UserAdress);
             await _unitOfWork.SaveChangesAsync();
-            return new ResponseModel<bool> { IsSuccess = true  , Result =true}; 
+            return new ResponseModel<bool> { IsSuccess = true  , Result =true};
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
         public async Task<ResponseModel<List<GetAddressDto>>> GetAddresses(){
+            try { 
             var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
             var adresses =await _unitOfWork.UserAddresses.GetUserAddressesAsync(currentUserId);
             var adressesDto = _mapper.Map<List<GetAddressDto>>(adresses);
-            return new ResponseModel<List<GetAddressDto>> { Result = adressesDto, IsSuccess = true }; 
+            return new ResponseModel<List<GetAddressDto>> { Result = adressesDto, IsSuccess = true };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<List<GetAddressDto>> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
 
     }

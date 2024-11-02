@@ -28,7 +28,7 @@ namespace Business.Services
 
         public async Task<ResponseModel<bool>> AddWishlistItemAsync(WishlistItemDto item)
         {
-            var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
+            try {             var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(currentUserId) || item?.ProductId == null)
             {
                 return new ResponseModel<bool> { IsSuccess = false, Message = "Invalid user or product" };
@@ -40,10 +40,16 @@ namespace Business.Services
             await _unitOfWork.SaveChangesAsync();
 
             return new ResponseModel<bool> { IsSuccess = true, Result = true };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
 
         public async Task<ResponseModel<bool>> RemoveWishlistItemAsync(WishlistItemDto item)
         {
+            try { 
             var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(currentUserId) || item?.ProductId == null)
             {
@@ -63,10 +69,16 @@ namespace Business.Services
             await _unitOfWork.SaveChangesAsync();
 
             return new ResponseModel<bool> { IsSuccess = true, Result = true };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
 
         public async Task<ResponseModel<List<GetProductDto>>> GetAllWishlistItemsAsync()
         {
+            try { 
             var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(currentUserId))
             {
@@ -87,6 +99,11 @@ namespace Business.Services
             var productDtos = wishlistItems.Select(wi => _mapper.Map<GetProductDto>(wi.Product)).ToList();
 
             return new ResponseModel<List<GetProductDto>> { IsSuccess = true, Result = productDtos };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<List<GetProductDto>> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
     }
 }

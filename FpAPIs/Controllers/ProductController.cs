@@ -98,6 +98,12 @@ namespace FpAPIs.Controllers
             var res = await _productService.GetCategoryLookUp();
             return Ok(res);
         }
+        [HttpGet("GetCategories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var res = await _productService.GetCategories();
+            return Ok(res);
+        }
 
         [HttpGet("ProductStatusLookup")]
         public async Task<IActionResult> ProductStatusLookup()

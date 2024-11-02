@@ -29,5 +29,6 @@ namespace Business.IServices
         Task<ResponseModel<List<GetProductDto>>> SearchProducts(ProductSearchDto productSearchDto);
         Task<ResponseModel<List<LookUpDataModel<int>>>> ProductStatusLookup();
         Task<ResponseModel<List<LookUpDataModel<int>>>> ProductColorLookup();
+        Task<ResponseModel<List<GetProductCatagorysDto>>> GetCategories();
     }
 }

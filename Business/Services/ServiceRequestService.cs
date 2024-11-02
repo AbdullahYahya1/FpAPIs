@@ -21,7 +21,7 @@ namespace Business.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         public ServiceRequestService(FPDbContext context, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(context)
-        {
+        { 
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -29,41 +29,47 @@ namespace Business.Services
 
         public async Task<ResponseModel<bool>> CreateService(PostServiceDto serviceRequest)
         {
-            var service = _mapper.Map<ServiceRequest>(serviceRequest);
+            try {
+                var service = _mapper.Map<ServiceRequest>(serviceRequest);
 
-            var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
-            service.CreatedById = currentUserId;
-            service.ServiceRequestStatus = ServiceRequestStatus.New;
-            service.SubmissionDate = DateTime.Now;
+                var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
+                service.CreatedById = currentUserId;
+                service.ServiceRequestStatus = ServiceRequestStatus.New;
+                service.SubmissionDate = DateTime.Now;
 
-            await _unitOfWork.ServiceRequests.AddAsync(service);
-            await _unitOfWork.SaveChangesAsync(); 
-            if (serviceRequest.ImagesString64 != null && serviceRequest.ImagesString64.Any())
-            {
-                foreach (var img in serviceRequest.ImagesString64)
-                {
-                    var imageBytes = Convert.FromBase64String(img);
-                    var uniqueFileName = $"{Guid.NewGuid()}.jpg";
-                    var physicalPath = Path.Combine("wwwroot", "images", uniqueFileName);
-                    await System.IO.File.WriteAllBytesAsync(physicalPath, imageBytes);
-
-                    var relativeImagePath = Path.Combine("images", uniqueFileName).Replace("\\", "/");
-                    
-                    var serviceImage = new ServiceImage
-                    {
-                        ImageUrl = relativeImagePath,
-                        RequestId = service.RequestId 
-                    };
-
-                    service.Images.Add(serviceImage);
-                }
+                await _unitOfWork.ServiceRequests.AddAsync(service);
                 await _unitOfWork.SaveChangesAsync();
+                if (serviceRequest.ImagesString64 != null && serviceRequest.ImagesString64.Any())
+                {
+                    foreach (var img in serviceRequest.ImagesString64)
+                    {
+                        var imageBytes = Convert.FromBase64String(img);
+                        var uniqueFileName = $"{Guid.NewGuid()}.jpg";
+                        var physicalPath = Path.Combine("wwwroot", "images", uniqueFileName);
+                        await System.IO.File.WriteAllBytesAsync(physicalPath, imageBytes);
+
+                        var relativeImagePath = Path.Combine("images", uniqueFileName).Replace("\\", "/");
+
+                        var serviceImage = new ServiceImage
+                        {
+                            ImageUrl = relativeImagePath,
+                            RequestId = service.RequestId
+                        };
+
+                        service.Images.Add(serviceImage);
+                    }
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                return new ResponseModel<bool> { IsSuccess = true, Result = true };
+            } catch (Exception ex)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ErrorFound" };
             }
-            return new ResponseModel<bool> { IsSuccess = true, Result = true };
         }
 
         public async Task<ResponseModel<List<GetServiceDto>>> GetServices()
         {
+            try { 
             var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
             var type = _httpContextAccessor.HttpContext.User?.FindFirst("UserType")?.Value;
             var services = new List<ServiceRequest>();
@@ -77,13 +83,24 @@ namespace Business.Services
             var user = await _unitOfWork.Users.getUserById(currentUserId);
             servicesDto.ForEach(s => s.UserPhone= user.MobileNumber);
             return new ResponseModel<List<GetServiceDto>> { IsSuccess = true, Result = servicesDto };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<List<GetServiceDto>> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
 
         public async Task<ResponseModel<GetServiceDto>> GetServicesByID(int Id)
         {
+            try { 
             var service= await _unitOfWork.ServiceRequests.GetServiceWithImgsByServiceId(Id);
             var serviceDto = _mapper.Map<GetServiceDto>(service); 
             return new ResponseModel<GetServiceDto> { Result = serviceDto, IsSuccess = true };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<GetServiceDto> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
 
         public async Task<ResponseModel<List<LookUpDataModel<int>>>> ProductRequestTypeLookup()
@@ -136,6 +153,7 @@ namespace Business.Services
 
         public async Task<ResponseModel<bool>> ResponseToRequest(int RequestId, UpdateRequestDto updateRequestDto)
         {
+            try { 
             var service = await _unitOfWork.ServiceRequests.GetByIdAsync(RequestId);
             if (service == null)
             {
@@ -146,6 +164,11 @@ namespace Business.Services
             service.ResponseDetails = updateRequestDto.ResponseDetails;
             await _unitOfWork.SaveChangesAsync();
             return new ResponseModel<bool> {IsSuccess = true};
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
 
     }

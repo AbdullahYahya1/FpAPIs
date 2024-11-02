@@ -29,6 +29,7 @@ namespace Business.Services
 
         public async Task<ResponseModel<GetOrderDto>> AddOrder(PostOrderDto postOrder)
         {
+            try { 
             var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(currentUserId))
             {
@@ -109,42 +110,72 @@ namespace Business.Services
                     };
                 }
             }
+            }catch (Exception ex)
+            {
+                return new ResponseModel<GetOrderDto>()
+                {
+                    IsSuccess = false,
+                    Message = $"ErrorFound"
+                };
+            }
         }
 
         public async Task<ResponseModel<bool>> AssignDriver(int OrderId, string UserId)
         {
-            var order = await _unitOfWork.Orders.GetByIdAsync(OrderId);
-            if (order == null)
+            try
             {
-                return new ResponseModel<bool> { IsSuccess = false, Message = "Order not found" };
+                var order = await _unitOfWork.Orders.GetByIdAsync(OrderId);
+                if (order == null)
+                {
+                    return new ResponseModel<bool> { IsSuccess = false, Message = "Order not found" };
+                }
+                var driver = await _unitOfWork.Users.getUserById(UserId);
+                if (driver == null || driver.UserType != UserType.DeliveryRepresentative)
+                {
+                    return new ResponseModel<bool> { IsSuccess = false, Message = "Invalid driver" };
+                }
+                order.DriverId = driver.UserId;
+                order.ShippingStatus = ShippingStatus.InTransit;
+                await _unitOfWork.Orders.UpdateAsync(order);
+                await _unitOfWork.SaveChangesAsync();
+                return new ResponseModel<bool> { IsSuccess = true, Result = true };
             }
-            var driver = await _unitOfWork.Users.getUserById(UserId);
-            if (driver == null || driver.UserType != UserType.DeliveryRepresentative)
-            {
-                return new ResponseModel<bool> { IsSuccess = false, Message = "Invalid driver" };
+            catch (Exception ex) {
+                return new ResponseModel<bool>
+                {
+                    IsSuccess = false,
+                    Message = "ErrorFound"
+
+                };
             }
-            order.DriverId = driver.UserId;
-            order.ShippingStatus = ShippingStatus.InTransit;
-            await _unitOfWork.Orders.UpdateAsync(order);
-            await _unitOfWork.SaveChangesAsync();
-            return new ResponseModel<bool> { IsSuccess = true, Result = true };
         }
 
         public async Task<ResponseModel<List<GetOrderDto>>> GetOrders()
         {
-            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
-            var userType = _httpContextAccessor.HttpContext?.User?.FindFirst("UserType")?.Value;
-            var orders = new List<Order>();
-            if (userType == UserType.Manager.ToString())
+            try
             {
-                orders = await _unitOfWork.Orders.GetAllOrders();
+                var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+                var userType = _httpContextAccessor.HttpContext?.User?.FindFirst("UserType")?.Value;
+                var orders = new List<Order>();
+                if (userType == UserType.Manager.ToString())
+                {
+                    orders = await _unitOfWork.Orders.GetAllOrders();
+                }
+                else
+                {
+                    orders = await _unitOfWork.Orders.GetOrdersAsync(currentUserId);
+                }
+                var ordersDto = _mapper.Map<List<GetOrderDto>>(orders);
+                return new ResponseModel<List<GetOrderDto>> { Result = ordersDto, IsSuccess = true };
             }
-            else
-            {
-                orders = await _unitOfWork.Orders.GetOrdersAsync(currentUserId);
+            catch (Exception ex){
+                return new ResponseModel<List<GetOrderDto>>
+                {
+                    IsSuccess = false,
+                    Message = "ErrorFound"
+                };
+            
             }
-            var ordersDto = _mapper.Map<List<GetOrderDto>>(orders);
-            return new ResponseModel<List<GetOrderDto>> { Result = ordersDto, IsSuccess = true };
         }
 
 
@@ -152,33 +183,42 @@ namespace Business.Services
 
         public async Task<ResponseModel<GetOrderDto>> PayOrder(int OrderId, PayOrderDto payOrderDto)
         {
-            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
-            var orders =await _unitOfWork.Orders.GetOrdersAsync(currentUserId);
-            var order = orders.FirstOrDefault(O => O.OrderId == OrderId);
-            if(order == null)
+            try {
+                var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+                var orders = await _unitOfWork.Orders.GetOrdersAsync(currentUserId);
+                var order = orders.FirstOrDefault(O => O.OrderId == OrderId);
+                if (order == null)
+                {
+                    return new ResponseModel<GetOrderDto>
+                    {
+                        IsSuccess = false,
+                        Message = "No Order Found"
+                    };
+                }
+                var transatction = new UserPurchaseTransaction()
+                {
+                    CardholderName = payOrderDto.CardholderName,
+                    CreatedById = currentUserId,
+                    TotalPrice = order.TotalPrice,
+                    TransactionDate = DateTime.UtcNow,
+                    Provider = PaymentProvider.Visa,
+                    TransactionStatus = TransactionStatus.Payed
+                };
+                await _unitOfWork.userPurchaseTransactions.AddAsync(transatction);
+                await _unitOfWork.SaveChangesAsync();
+                order.TransactionId = transatction.TransactionId;
+                await _unitOfWork.Orders.UpdateAsync(order);
+                await _unitOfWork.SaveChangesAsync();
+                var orderDto = _mapper.Map<GetOrderDto>(order);
+                return new ResponseModel<GetOrderDto> { IsSuccess = true, Result = orderDto };
+            } catch (Exception ex)
             {
                 return new ResponseModel<GetOrderDto>
                 {
                     IsSuccess = false,
-                    Message = "No Order Found"
+                    Message = "ErrorFound",
                 };
             }
-            var transatction = new UserPurchaseTransaction()
-            {
-                CardholderName = payOrderDto.CardholderName,
-                CreatedById = currentUserId,
-                TotalPrice = order.TotalPrice,
-                TransactionDate = DateTime.UtcNow,
-                Provider=  PaymentProvider.Visa ,
-                TransactionStatus=TransactionStatus.Payed
-            };
-            await _unitOfWork.userPurchaseTransactions.AddAsync(transatction);
-            await _unitOfWork.SaveChangesAsync();
-            order.TransactionId = transatction.TransactionId;
-            await _unitOfWork.Orders.UpdateAsync(order);
-            await _unitOfWork.SaveChangesAsync();   
-            var orderDto = _mapper.Map<GetOrderDto>(order);
-            return new ResponseModel<GetOrderDto> { IsSuccess = true, Result = orderDto };
         }
     }
 }

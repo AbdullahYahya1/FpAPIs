@@ -15,7 +15,6 @@ public class AppUser
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string UserId { get; set; }
 
-    [Required]
     [StringLength(100)]
     [EmailAddress]
     public string? Email { get; set; }
@@ -28,8 +27,6 @@ public class AppUser
 
     [Phone]
     public string MobileNumber { get; set; }
-
-    [Required]
     public string? Password { get; set; }
 
     public string? RefreshToken { get; set; }

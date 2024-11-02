@@ -36,6 +36,7 @@ namespace DataAccess.Mapping
 
             CreateMap<Category,PostCategoryDto>().ReverseMap();
             CreateMap<Category, GetCategoryDto>().ReverseMap();
+            CreateMap<Category, GetProductCatagorysDto>().ReverseMap();
 
             CreateMap<Product, GetProductDto>().ReverseMap();
             CreateMap<ProductImage, ImageDto>().ReverseMap();

@@ -139,14 +139,27 @@ namespace Business.Services
 
         private string GenerateJwtToken(AppUser user)
         {
-            var claims = new[]
+            var claims = new List<Claim>
+    {
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
+
+            if (!string.IsNullOrEmpty(user.Email))
             {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim("UserType", user.UserType.ToString()),
-            new Claim("UserId", user.UserId),
-        };
+                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Email));
+                claims.Add(new Claim(ClaimTypes.Name, user.Email));
+            }
+
+            if (!string.IsNullOrEmpty(user.UserId))
+            {
+                claims.Add(new Claim("UserId", user.UserId));
+            }
+            else if (!string.IsNullOrEmpty(user.MobileNumber))
+            {
+                claims.Add(new Claim("UserId", user.MobileNumber)); // Use MobileNumber as fallback if UserId is missing.
+            }
+
+            claims.Add(new Claim("UserType", user.UserType.ToString() ?? "Unknown"));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -602,6 +615,7 @@ namespace Business.Services
 
         public async Task<ResponseModel<List<LookUpDataModel<string>>>> DriversUsersLookUp()
         {
+            try { 
             var rse = await _unitOfWork.Users.getUsersByType(UserType.DeliveryRepresentative);
             var result = rse.Select(enumValue => new LookUpDataModel<string>
             {
@@ -610,10 +624,16 @@ namespace Business.Services
                 NameEn = enumValue.UserName
             }).ToList();
             return new ResponseModel<List<LookUpDataModel<string>>> { Result = result, IsSuccess = true };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<List<LookUpDataModel<string>>> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
 
         public async Task<ResponseModel<bool>> AddDriver(PostDriverDto postDriverDto)
         {
+            try { 
             var existingUser = await _unitOfWork.Users.GetUserByMobileNumber(postDriverDto.MobileNumber);
             if (existingUser != null)
             {
@@ -624,18 +644,20 @@ namespace Business.Services
             user.UserType = UserType.DeliveryRepresentative;
             await _unitOfWork.Users.CreateUser(user);
             return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
 
         public async Task<ResponseModel<AuthenticationResponse>> CustomerAuthenticate(string phone)
         {
+            try { 
             var user = await _unitOfWork.Users.GetUserByMobileNumber(phone);
             if (user == null)
             {
-                user = new AppUser
-                {
-                    MobileNumber = phone,
-                    UserType = UserType.Client
-                };
+                user = new AppUser { MobileNumber = phone, UserType = UserType.Client };
                 user.IsActive = true;
                 await _unitOfWork.Users.CreateUser(user);
                 await _unitOfWork.SaveChangesAsync();
@@ -668,6 +690,11 @@ namespace Business.Services
                 },
                 Message = string.Empty
             };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel<AuthenticationResponse> { IsSuccess = false, Message = "ErrorFound" };
+            }
         }
     }
 }

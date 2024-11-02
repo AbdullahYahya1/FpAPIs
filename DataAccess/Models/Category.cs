@@ -22,6 +22,7 @@ namespace DataAccess.Models
         [StringLength(100)]
         public string NameEn { get; set; }
         public virtual ICollection<Product> Products { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
 }

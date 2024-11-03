@@ -399,7 +399,7 @@ namespace Business.Services
             }
         }
 
-        public async Task<ResponseModel<bool>> Delete(int productId)
+        public async Task<ResponseModel<bool>> DeactivateProduct(int productId)
         {
             try
             {
@@ -421,6 +421,7 @@ namespace Business.Services
                     product.WishlistItems.Remove(item);
                 }
                 product.ProductStatus = ProductStatus.Inactive;
+                await _unitOfWork.Products.UpdateAsync(product);
                 await _unitOfWork.SaveChangesAsync();
                 return new ResponseModel<bool> { IsSuccess = true, Result = true };
             }catch (Exception ex)

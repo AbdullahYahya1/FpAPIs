@@ -40,10 +40,11 @@ namespace FpAPIs.Controllers
             var res = await _productService.UpdateProduct(ProductId, updateProductDto);
             return Ok(res);
         }
+
         [HttpPost("DeactivateProduct/{productId}")]
-        public async Task<IActionResult> RemoveProduct(int productId)
+        public async Task<IActionResult> DeactivateProduct(int productId)
         {
-            var res = await _productService.Delete(productId);
+            var res = await _productService.DeactivateProduct(productId);
             return Ok(res);
         }
         [HttpPost("AddBrand")]

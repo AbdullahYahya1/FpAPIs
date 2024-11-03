@@ -23,13 +23,10 @@ public class ServiceRequest
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int RequestId { get; set; }
-
     [Required]
     public string CreatedById { get; set; }
     public virtual AppUser CreatedBy { get; set; }
-
     public RequestType RequestType { get; set; }
-
     [StringLength(500)]
     public string ProductDetails { get; set; }
 

@@ -19,9 +19,6 @@ namespace GoodApiHereForYou.Controllers
             _context = context;
         }
 
-        // SalesOverTime, OrdersByStatus, TopCustomers, SalesByCategory, TransactionSuccessRate, NewUsersOverTime, OrdersOverTime, ShippingStatus
-
-        // 1. Total Sales Over Time (Line Chart)
         [HttpGet("SalesOverTime")]
         public async Task<IActionResult> GetSalesOverTime()
         {
@@ -44,7 +41,6 @@ namespace GoodApiHereForYou.Controllers
             });
         }
 
-        // 2. Orders By Status (Pie or Bar Chart)
         [HttpGet("OrdersByStatus")]
         public async Task<IActionResult> GetOrdersByStatus()
         {
@@ -65,7 +61,6 @@ namespace GoodApiHereForYou.Controllers
             });
         }
 
-        // 3. Top Customers By Orders (Bar Chart)
         [HttpGet("TopCustomers")]
         public async Task<IActionResult> GetTopCustomers()
         {
@@ -89,7 +84,6 @@ namespace GoodApiHereForYou.Controllers
             });
         }
 
-        // 4. Sales By Category (Bar Chart)
         [HttpGet("SalesByCategory")]
         public async Task<IActionResult> GetSalesByCategory()
         {
@@ -112,7 +106,6 @@ namespace GoodApiHereForYou.Controllers
             });
         }
 
-        // 6. New Users Over Time (Line Chart)
         [HttpGet("NewUsersOverTime")]
         public async Task<IActionResult> GetNewUsersOverTime()
         {
@@ -133,7 +126,6 @@ namespace GoodApiHereForYou.Controllers
             });
         }
 
-        // 7. Orders Over Time (Line Chart)
         [HttpGet("OrdersOverTime")]
         public async Task<IActionResult> GetOrdersOverTime()
         {
@@ -154,7 +146,6 @@ namespace GoodApiHereForYou.Controllers
             });
         }
 
-        // 8. Shipping Status (Bar Chart)
         [HttpGet("ShippingStatus")]
         public async Task<IActionResult> GetShippingStatus()
         {
@@ -170,6 +161,67 @@ namespace GoodApiHereForYou.Controllers
             return Ok(new ResponseModel<List<ShippingStatusDTO>>
             {
                 Result = shippingStatus,
+                IsSuccess = true,
+                Message = null
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAdminDashboardStats()
+        {
+            var newOrdersCount = await _context.Orders
+                .Where(o => o.CreatedAt.Date == DateTime.UtcNow.Date)
+                .CountAsync();
+
+            var newUsersCount = await _context.Users
+                .Where(u => u.DateCreated.Date == DateTime.UtcNow.Date)
+                .CountAsync();
+
+            var totalOrders = await _context.Orders.CountAsync();
+
+            var totalSales = await _context.Orders
+                .Where(o => o.Status == OrderStatus.Complete)
+                .SumAsync(o => (decimal?)o.TotalPrice) ?? 0;
+
+            var pendingServiceRequests = await _context.ServiceRequests
+                .Where(sr => sr.ServiceRequestStatus == ServiceRequestStatus.New)
+                .CountAsync();
+
+            var completedOrdersToday = await _context.Orders
+                .Where(o => o.Status == OrderStatus.Complete && o.CreatedAt.Date == DateTime.UtcNow.Date)
+                .CountAsync();
+
+            var productsInStock = await _context.Products
+                .Where(p => p.ProductStatus == ProductStatus.Active)
+                .CountAsync();
+
+            var totalWishlistItems = await _context.WishlistItems.CountAsync();
+
+            var cancelledOrders = await _context.Orders
+                .Where(o => o.Status == OrderStatus.Cancelled)
+                .CountAsync();
+
+            var totalRevenueThisMonth = await _context.Orders
+                .Where(o => o.Status == OrderStatus.Complete && o.CreatedAt.Month == DateTime.UtcNow.Month && o.CreatedAt.Year == DateTime.UtcNow.Year)
+                .SumAsync(o => (decimal?)o.TotalPrice) ?? 0;
+
+            var stats = new
+            {
+                NewOrdersCountToday = newOrdersCount,
+                NewUsersCountToday = newUsersCount,
+                TotalOrders = totalOrders,
+                TotalSales = totalSales,
+                PendingServiceRequests = pendingServiceRequests,
+                CompletedOrdersToday = completedOrdersToday,
+                ProductsInStock = productsInStock,
+                TotalWishlistItems = totalWishlistItems,
+                CancelledOrders = cancelledOrders,
+                TotalRevenueThisMonth = totalRevenueThisMonth,
+            };
+
+            return Ok(new ResponseModel<object>
+            {
+                Result = stats,
                 IsSuccess = true,
                 Message = null
             });

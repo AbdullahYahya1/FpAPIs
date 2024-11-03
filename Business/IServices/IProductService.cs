@@ -14,8 +14,7 @@ namespace Business.IServices
 
         Task<ResponseModel<List<GetProductDto>>> GetProducts(paginationDto paginationDto);
         Task<ResponseModel<GetProductDto>> GetProduct(int productId);
-        Task<ResponseModel<bool>> Delete(int productId);
-
+        Task<ResponseModel<bool>> DeactivateProduct(int productId);
         Task<ResponseModel<bool>> CreateProdcutMaterial(PostMaterialDto postMaterialDto);
         Task<ResponseModel<bool>> CreateProdcutCategory(PostCategoryDto postCategoryDto);
         Task<ResponseModel<bool>> CreateProdcutStyle(PostStyleDto postStyleDto);

@@ -28,5 +28,11 @@ namespace FpAPIs.Controllers
             var res = await _userService.AddDriver(driverDto);
             return Ok(res);
         }
+        [HttpPost("UpdateUser")]
+        public async Task<IActionResult> UpdateUser(PutUserDto userDto)
+        {
+            var res = await _userService.UpdateUser(userDto);
+            return Ok(res);
+        }
     }
 }

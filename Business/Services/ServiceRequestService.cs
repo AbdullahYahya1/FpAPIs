@@ -94,8 +94,10 @@ namespace Business.Services
         {
             try { 
             var service= await _unitOfWork.ServiceRequests.GetServiceWithImgsByServiceId(Id);
-            var serviceDto = _mapper.Map<GetServiceDto>(service); 
-            return new ResponseModel<GetServiceDto> { Result = serviceDto, IsSuccess = true };
+            var user = await _unitOfWork.Users.getUserById(service.CreatedById);
+            var serviceDto = _mapper.Map<GetServiceDto>(service);
+            serviceDto.UserPhone = user.MobileNumber;
+                return new ResponseModel<GetServiceDto> { Result = serviceDto, IsSuccess = true };
             }
             catch (Exception ex)
             {

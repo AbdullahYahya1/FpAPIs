@@ -315,7 +315,6 @@ namespace Business.Services
                 {
                     return new ResponseModel<bool> { IsSuccess = false, Message = "CurrentUserNotAuthenticated" };
                 }
-
                 var currentUser = await _unitOfWork.Users.GetUserById(currentUserId);
                 if (currentUser == null)
                 {
@@ -327,8 +326,6 @@ namespace Business.Services
                     return new ResponseModel<bool> { IsSuccess = false, Message = "UsernameInUse" };
                 }
                 _mapper.Map(userDto, currentUser);
-
-
                 await _unitOfWork.Users.UpdateUser(currentUser);
                 return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
             }

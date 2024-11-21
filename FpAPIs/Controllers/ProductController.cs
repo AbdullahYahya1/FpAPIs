@@ -1,8 +1,11 @@
 ﻿using Business.IServices;
-using Business.Services;
 using DataAccess.DTOs;
+using DataAccess.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FpAPIs.Controllers
 {
@@ -12,108 +15,117 @@ namespace FpAPIs.Controllers
     {
         private readonly IProductService _productService;
 
-        public ProductController(IProductService productService) {
+        public ProductController(IProductService productService)
+        {
             _productService = productService;
         }
+
         [HttpGet("SearchProducts")]
-        public async Task<IActionResult> SearchProducts([FromQuery] ProductSearchDto productSearchDto)
+        public async Task<ActionResult<ResponseModel<List<GetProductDto>>>> SearchProducts([FromQuery] ProductSearchDto productSearchDto)
         {
             var res = await _productService.SearchProducts(productSearchDto);
-            return Ok(res); 
+            return Ok(res);
         }
-
+        [Authorize]
         [HttpGet("GetProduct/{productId}")]
-        public async Task<IActionResult> GetProducts(int productId)
+        public async Task<ActionResult<ResponseModel<GetProductDto>>> GetProducts(int productId)
         {
             var res = await _productService.GetProduct(productId);
             return Ok(res);
         }
+        [Authorize]
         [HttpPost("AddProduct")]
-        public async Task<IActionResult> AddProdcut(PostProdcutDto postProdcutDto)
+        public async Task<ActionResult<ResponseModel<Product>>> AddProdcut(PostProdcutDto postProdcutDto)
         {
             var res = await _productService.CreateProduct(postProdcutDto);
             return Ok(res);
         }
+        [Authorize]
         [HttpPut("UpdateProduct/{ProductId}")]
-        public async Task<IActionResult> UpdateProduct([FromRoute] int ProductId, PostProdcutDto updateProductDto)
+        public async Task<ActionResult<ResponseModel<bool>>> UpdateProduct([FromRoute] int ProductId, PostProdcutDto updateProductDto)
         {
             var res = await _productService.UpdateProduct(ProductId, updateProductDto);
             return Ok(res);
         }
-
+        [Authorize]
         [HttpPost("DeactivateProduct/{productId}")]
-        public async Task<IActionResult> DeactivateProduct(int productId)
+        public async Task<ActionResult<ResponseModel<bool>>> DeactivateProduct(int productId)
         {
             var res = await _productService.DeactivateProduct(productId);
             return Ok(res);
         }
+        [Authorize]
         [HttpPost("AddBrand")]
-        public async Task<IActionResult> AddBrand(PostBrandDto brandDto)
+        public async Task<ActionResult<ResponseModel<bool>>> AddBrand(PostBrandDto brandDto)
         {
             var res = await _productService.CreateProdcutBrand(brandDto);
             return Ok(res);
         }
+        [Authorize]
         [HttpPost("AddStyle")]
-        public async Task<IActionResult> AddStyle(PostStyleDto StyleDto)
+        public async Task<ActionResult<ResponseModel<bool>>> AddStyle(PostStyleDto styleDto)
         {
-            var res = await _productService.CreateProdcutStyle(StyleDto);
+            var res = await _productService.CreateProdcutStyle(styleDto);
             return Ok(res);
         }
+        [Authorize]
         [HttpPost("AddMaterial")]
-        public async Task<IActionResult> AddMaterial(PostMaterialDto MaterialDto)
+        public async Task<ActionResult<ResponseModel<bool>>> AddMaterial(PostMaterialDto materialDto)
         {
-            var res = await _productService.CreateProdcutMaterial(MaterialDto);
+            var res = await _productService.CreateProdcutMaterial(materialDto);
             return Ok(res);
         }
+        [Authorize]
         [HttpPost("AddCategory")]
-        public async Task<IActionResult> AddCategory(PostCategoryDto CategoryDto)
+        public async Task<ActionResult<ResponseModel<bool>>> AddCategory(PostCategoryDto categoryDto)
         {
-            var res = await _productService.CreateProdcutCategory(CategoryDto);
+            var res = await _productService.CreateProdcutCategory(categoryDto);
             return Ok(res);
         }
-
         [HttpGet("GetBrandsLookUp")]
-        public async Task<IActionResult> GetBrandsLookUp()
+        public async Task<ActionResult<ResponseModel<List<LookUpDataModel<int>>>>> GetBrandsLookUp()
         {
             var res = await _productService.GetBrandsLookUp();
             return Ok(res);
         }
 
         [HttpGet("GetStyleLookUp")]
-        public async Task<IActionResult> GetStyleLookUp()
+        public async Task<ActionResult<ResponseModel<List<LookUpDataModel<int>>>>> GetStyleLookUp()
         {
             var res = await _productService.GetStyleLookUp();
             return Ok(res);
         }
 
         [HttpGet("GetMaterialLookUp")]
-        public async Task<IActionResult> GetMaterialLookUp()
+        public async Task<ActionResult<ResponseModel<List<LookUpDataModel<int>>>>> GetMaterialLookUp()
         {
             var res = await _productService.GetMaterialLookUp();
             return Ok(res);
         }
 
         [HttpGet("GetCategoryLookUp")]
-        public async Task<IActionResult> GetCategoryLookUp()
+        public async Task<ActionResult<ResponseModel<List<LookUpDataModel<int>>>>> GetCategoryLookUp()
         {
             var res = await _productService.GetCategoryLookUp();
             return Ok(res);
         }
+
         [HttpGet("GetCategories")]
-        public async Task<IActionResult> GetCategories()
+        public async Task<ActionResult<ResponseModel<List<GetProductCatagorysDto>>>> GetCategories()
         {
             var res = await _productService.GetCategories();
             return Ok(res);
         }
 
         [HttpGet("ProductStatusLookup")]
-        public async Task<IActionResult> ProductStatusLookup()
+        public async Task<ActionResult<ResponseModel<List<LookUpDataModel<int>>>>> ProductStatusLookup()
         {
             var res = await _productService.ProductStatusLookup();
             return Ok(res);
         }
+
         [HttpGet("ProductColorLookup")]
-        public async Task<IActionResult> ProductColorLookup()
+        public async Task<ActionResult<ResponseModel<List<LookUpDataModel<int>>>>> ProductColorLookup()
         {
             var res = await _productService.ProductColorLookup();
             return Ok(res);

@@ -1,7 +1,9 @@
 ﻿using Business.IServices;
 using DataAccess.DTOs;
+using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FpAPIs.Controllers
@@ -19,20 +21,21 @@ namespace FpAPIs.Controllers
         }
 
         [HttpGet("GetCartItems")]
-        public async Task<IActionResult> GetCartItems()
+        public async Task<ActionResult<ResponseModel<List<GetProductDto>>>> GetCartItems()
         {
             var res = await _cartItemService.GetAllCartItemAsync();
-            return Ok(res); 
+            return Ok(res);
         }
 
         [HttpPost("AddCartItem")]
-        public async Task<IActionResult> AddCartItem([FromBody] CartItemDto cartItemDto)
+        public async Task<ActionResult<ResponseModel<bool>>> AddCartItem([FromBody] CartItemDto cartItemDto)
         {
             var res = await _cartItemService.AddCartItemAsync(cartItemDto);
             return Ok(res);
         }
+
         [HttpPost("RemoveCartItem")]
-        public async Task<IActionResult> RemoveCartItem([FromBody] CartItemDto cartItemDto)
+        public async Task<ActionResult<ResponseModel<bool>>> RemoveCartItem([FromBody] CartItemDto cartItemDto)
         {
             var res = await _cartItemService.RemoveCartItemAsync(cartItemDto);
             return Ok(res);

@@ -1,6 +1,7 @@
 ﻿using DataAccess.Context;
 using DataAccess.DTOs;
 using DataAccess.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,8 @@ namespace GoodApiHereForYou.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class StatsController : ControllerBase
     {
         private readonly FPDbContext _context;

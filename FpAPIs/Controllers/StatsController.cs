@@ -26,7 +26,7 @@ namespace GoodApiHereForYou.Controllers
         public async Task<IActionResult> GetSalesOverTime()
         {
             var salesOverTime = await _context.Orders
-                .Where(o => o.Status == OrderStatus.Complete)
+                .Where(o => o.Transaction!=null)
                 .GroupBy(o => o.CreatedAt.Date)
                 .Select(g => new SalesOverTimeDTO
                 {

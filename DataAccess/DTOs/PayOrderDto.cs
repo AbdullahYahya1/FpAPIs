@@ -21,7 +21,5 @@ namespace DataAccess.DTOs
         public DateTime? ExpirationDate { get; set; }
         [StringLength(3)]
         public string? CVV { get; set; }
-
-        public bool Cash {  get; set; } 
     }
 }

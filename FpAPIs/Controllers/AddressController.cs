@@ -27,11 +27,18 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
 
-        [HttpPost("GetAddresses")]
+        [HttpGet("GetAddresses")]
         public async Task<ActionResult<ResponseModel<List<GetAddressDto>>>> GetAddresses()
         {
             var res = await _userAddressService.GetAddresses();
             return Ok(res);
         }
+        [HttpPut("UpdateAddress")]
+        public async Task<ActionResult<ResponseModel<bool>>> UpdateAddress(UpdateAddressDto updateAddressDto)
+        {
+            var res = await _userAddressService.UpdateAddress(updateAddressDto);
+            return Ok(res);
+        }
+
     }
 }

@@ -13,5 +13,6 @@ namespace Business.IServices
         Task<ResponseModel<bool>> AddAddress(PostAddressDto postAddressDto);
         Task<ResponseModel<List<GetAddressDto>>> GetAddresses();
 
+        Task<ResponseModel<bool>> UpdateAddress(UpdateAddressDto updateAddressDto);
     }
 }

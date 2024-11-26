@@ -39,5 +39,6 @@ public class ServiceRequest
     public DateTime? ResponseDate { get; set; }
     [StringLength(2000)]
     public string? ResponseDetails { get; set; }
+
     public virtual ICollection<ServiceImage> Images { get; set; } = new List<ServiceImage>();
 }

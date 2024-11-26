@@ -94,10 +94,6 @@ namespace Business.Services
                     return new ResponseModel<List<GetProductDto>> { IsSuccess = false, Message = "Invalid user" };
                 }
                 var cartItems = await _unitOfWork.CartItems.GetCartItemProductsByUserID(currentUserId);
-                if (cartItems == null || !cartItems.Any())
-                {
-                    return new ResponseModel<List<GetProductDto>> { IsSuccess = false, Message = "Cart items not found" };
-                }
                 var productDtos = cartItems.Select(item => _mapper.Map<GetProductDto>(item.Product)).ToList();
                 return new ResponseModel<List<GetProductDto>> { IsSuccess = true, Result = productDtos };
             }

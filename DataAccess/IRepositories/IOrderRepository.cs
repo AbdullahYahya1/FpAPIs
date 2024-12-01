@@ -10,5 +10,7 @@ namespace DataAccess.IRepositories
     {
         Task<List<Order>> GetOrdersAsync(string customerId);
         Task<List<Order>> GetAllOrders();
+
+        Task CancelOrders();
     }
 }

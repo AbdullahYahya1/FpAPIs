@@ -190,6 +190,8 @@ try
             var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
             var backgroundJobService = scope.ServiceProvider.GetRequiredService<BackgroundJobService>();
             recurringJobManager.AddOrUpdate("healthCheck-job", () => backgroundJobService.HealthCheck(), Cron.HourInterval(1));
+            recurringJobManager.AddOrUpdate("cancel-orders-job",() => backgroundJobService.CancelOrders(),Cron.Minutely);
+
         }
     });
 

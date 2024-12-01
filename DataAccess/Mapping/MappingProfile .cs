@@ -48,7 +48,9 @@ namespace DataAccess.Mapping
             CreateMap<CartItem, CartItemDto>().ReverseMap();
 
             CreateMap<UserAddress, PostAddressDto>().ReverseMap();
-            CreateMap<UserAddress, GetAddressDto>().ReverseMap();
+            CreateMap<ServiceRequest, GetServiceDto>()
+            .ForMember(dest => dest.UserPhone, opt => opt.MapFrom(src => src.CreatedBy.MobileNumber))
+            .ReverseMap();
             CreateMap<UserAddress, UpdateAddressDto>().ReverseMap();
 
             CreateMap<OrderItem ,GetOrderItemDto>().ReverseMap();

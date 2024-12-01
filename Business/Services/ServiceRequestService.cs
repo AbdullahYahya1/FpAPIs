@@ -75,13 +75,11 @@ namespace Business.Services
             var services = new List<ServiceRequest>();
             if (type == UserType.Manager.ToString()) {
                  services = await _unitOfWork.ServiceRequests.GetAllWithImgsAsync();
-            }
-            else {
+                }
+                else {
                  services = await _unitOfWork.ServiceRequests.GetAllWithImgsAsyncByUserId(currentUserId);
             }
             var servicesDto =_mapper.Map<List<GetServiceDto>>(services);
-            var user = await _unitOfWork.Users.getUserById(currentUserId);
-            servicesDto.ForEach(s => s.UserPhone= user.MobileNumber);
             return new ResponseModel<List<GetServiceDto>> { IsSuccess = true, Result = servicesDto };
             }
             catch (Exception ex)

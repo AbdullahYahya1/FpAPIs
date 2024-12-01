@@ -66,5 +66,31 @@ namespace DataAccess.Repositories
             .Include(o => o.Transaction)
             .ToListAsync();
         }
+
+
+        public async Task CancelOrders()
+        {
+            var ordersToCancel = await _context.Orders
+                .Include(o => o.OrderItems)
+                .Where(o => o.Transaction == null && o.CreatedAt.AddMinutes(30) < DateTime.UtcNow)
+                .ToListAsync();
+
+            foreach (var order in ordersToCancel)
+            {
+                var userId = order.CustomerId;
+                foreach (var orderItem in order.OrderItems)
+                {
+                    var cartItem = new CartItem
+                    {
+                        UserId = userId,
+                        ProductId = orderItem.ProductId,
+                        DateAdded = DateTime.UtcNow
+                    };
+                    await _context.CartItems.AddAsync(cartItem);
+                }
+                _context.Orders.Remove(order);
+            }
+            await _context.SaveChangesAsync();
+        }
     }
 }

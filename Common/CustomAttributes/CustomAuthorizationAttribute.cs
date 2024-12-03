@@ -9,8 +9,10 @@ namespace Common
     {
         Client = 0,
         Manager = 1,
-        Support = 2
+        Support = 2,
+        DeliveryRepresentative = 3 
     }
+
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
     {

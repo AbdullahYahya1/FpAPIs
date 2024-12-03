@@ -6,7 +6,6 @@ public enum OrderStatus
     Processing=0,
     Complete=1,
     Cancelled=2,
-    Returned=3
 }
 
 public enum ShippingStatus

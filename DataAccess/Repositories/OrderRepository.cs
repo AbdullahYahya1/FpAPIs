@@ -24,8 +24,8 @@ namespace DataAccess.Repositories
             .Include(o => o.Transaction)
             .Include(o => o.ShippingAddress)
             .Include(o => o.OrderItems)
-                .ThenInclude(OI=>OI.Product)
-                    .ThenInclude(P=>P.Brand)
+                .ThenInclude(OI => OI.Product)
+                    .ThenInclude(P => P.Brand)
             .Include(o => o.OrderItems)
                 .ThenInclude(OI => OI.Product)
                     .ThenInclude(P => P.Images)
@@ -72,6 +72,7 @@ namespace DataAccess.Repositories
         {
             var ordersToCancel = await _context.Orders
                 .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
                 .Where(o => o.Transaction == null && o.CreatedAt.AddMinutes(30) < DateTime.UtcNow)
                 .ToListAsync();
 
@@ -80,6 +81,10 @@ namespace DataAccess.Repositories
                 var userId = order.CustomerId;
                 foreach (var orderItem in order.OrderItems)
                 {
+                    if (orderItem.Product != null)
+                    {
+                        orderItem.Product.ProductStatus = Models.ProductStatus.Active;
+                    }
                     var cartItem = new CartItem
                     {
                         UserId = userId,
@@ -91,6 +96,33 @@ namespace DataAccess.Repositories
                 _context.Orders.Remove(order);
             }
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Order>> GetDriverOrdersAsync(string DriverId)
+        {
+            var orders = await _context.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Transaction)
+            .Include(o => o.ShippingAddress)
+            .Include(o => o.OrderItems)
+                .ThenInclude(OI => OI.Product)
+                    .ThenInclude(P => P.Brand)
+            .Include(o => o.OrderItems)
+                .ThenInclude(OI => OI.Product)
+                    .ThenInclude(P => P.Images)
+            .Include(o => o.OrderItems)
+                .ThenInclude(OI => OI.Product)
+                    .ThenInclude(P => P.Style)
+            .Include(o => o.OrderItems)
+                .ThenInclude(OI => OI.Product)
+                    .ThenInclude(P => P.Material)
+            .Include(o => o.OrderItems)
+                .ThenInclude(OI => OI.Product)
+                    .ThenInclude(P => P.Category)
+            .Include(o => o.Transaction)
+            .Where(O => O.DriverId == DriverId)
+            .ToListAsync();
+            return orders;
         }
     }
 }

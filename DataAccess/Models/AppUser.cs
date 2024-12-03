@@ -1,13 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Common;
 
-public enum UserType
-{
-    Client = 0,
-    Manager = 1,
-    Support = 2,
-    DeliveryRepresentative = 3 // مندوب توصيل
-}
 
 public class AppUser
 {

@@ -6,6 +6,7 @@ using DataAccess.DTOs;
 using DataAccess.IRepositories;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -157,13 +158,19 @@ namespace Business.Services
                 var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
                 var userType = _httpContextAccessor.HttpContext?.User?.FindFirst("UserType")?.Value;
                 var orders = new List<Order>();
-                if (userType == UserType.Manager.ToString())
+                switch (userType)
                 {
-                    orders = await _unitOfWork.Orders.GetAllOrders();
-                }
-                else
-                {
-                    orders = await _unitOfWork.Orders.GetOrdersAsync(currentUserId);
+                    case nameof(UserType.Manager):
+                        orders = await _unitOfWork.Orders.GetAllOrders();
+                        break;
+
+                    case nameof(UserType.Client):
+                        orders = await _unitOfWork.Orders.GetOrdersAsync(currentUserId);
+                        break;
+
+                    case nameof(UserType.DeliveryRepresentative):
+                        orders = await _unitOfWork.Orders.GetDriverOrdersAsync(currentUserId);
+                        break;
                 }
                 var ordersDto = _mapper.Map<List<GetOrderDto>>(orders);
                 return new ResponseModel<List<GetOrderDto>> { Result = ordersDto, IsSuccess = true };
@@ -177,9 +184,7 @@ namespace Business.Services
             
             }
         }
-
-
-
+        
 
         public async Task<ResponseModel<GetOrderDto>> PayOrder(int OrderId, PayOrderDto payOrderDto)
         {

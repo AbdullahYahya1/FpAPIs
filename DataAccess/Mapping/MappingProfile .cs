@@ -40,6 +40,7 @@ namespace DataAccess.Mapping
 
             CreateMap<Product, GetProductDto>().ReverseMap();
             CreateMap<ProductImage, ImageDto>().ReverseMap();
+            CreateMap<UserAddress, GetAddressDto>().ReverseMap();
 
             CreateMap<ServiceRequest, PostServiceDto>().ReverseMap();
             CreateMap<ServiceImage, ImageDto>().ReverseMap();

@@ -14,5 +14,9 @@ namespace Business.IServices
         Task<ResponseModel<List<GetOrderDto>>> GetOrders();
         Task<ResponseModel<GetOrderDto>> PayOrder(int OrderId, PayOrderDto payOrderDto);
         Task<ResponseModel<bool>> AssignDriver(int OrderId, string UserId);
-     }
+        Task<ResponseModel<bool>> DeliverOrder(int OrderId);
+        Task<ResponseModel<bool>> CancelOrder(int OrderId);
+        Task<ResponseModel<bool>> PickUpOrder(int OrderId);
+
+    }
 }

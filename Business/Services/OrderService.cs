@@ -6,12 +6,7 @@ using DataAccess.DTOs;
 using DataAccess.IRepositories;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Business.Services
 {
@@ -151,6 +146,64 @@ namespace Business.Services
             }
         }
 
+        public async Task<ResponseModel<bool>> CancelOrder(int OrderId)
+        {
+            var order =await _unitOfWork.Orders.GetByIdAsync(OrderId);
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+
+            if (order == null)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "Order not found" };
+            }
+            if(order.DriverId != currentUserId)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "Unauthorized" };
+            }
+            order.Status = OrderStatus.Processing;
+            order.ShippingStatus = ShippingStatus.FailedDelivery;
+            await _unitOfWork.Orders.UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
+        }
+
+        public async Task<ResponseModel<bool>> DeliverOrder(int OrderId)
+        {
+            var order =await _unitOfWork.Orders.GetByIdAsync(OrderId);
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+            if(order == null)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "OrderNotFound" };
+            }
+            if (order.DriverId != currentUserId)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "Unauthorized" };
+            }
+            order.ShippingStatus = ShippingStatus.Delivered;
+            order.Status = OrderStatus.Complete;
+            await _unitOfWork.Orders.UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
+        }
+
+        public async Task<ResponseModel<bool>> PickUpOrder(int OrderId)
+        {
+            var order =await _unitOfWork.Orders.GetByIdAsync(OrderId);
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+            if (order == null)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "OrderNotFound" };
+            }
+            if (order.DriverId != currentUserId)
+            {
+                return new ResponseModel<bool> { IsSuccess = false, Message = "Unauthorized" };
+            }
+            order.ShippingStatus = ShippingStatus.OutForDelivery;
+            await _unitOfWork.Orders.UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool> { IsSuccess = true, Result = true };
+
+        }
+
         public async Task<ResponseModel<List<GetOrderDto>>> GetOrders()
         {
             try
@@ -225,5 +278,7 @@ namespace Business.Services
                 };
             }
         }
+
+   
     }
 }

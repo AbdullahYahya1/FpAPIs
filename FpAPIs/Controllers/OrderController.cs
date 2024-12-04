@@ -48,5 +48,23 @@ namespace FpAPIs.Controllers
             var res = await _orderService.AssignDriver(OrderId, UserId);
             return Ok(res);
         }
+        [HttpPost("Driver/Deliver/{OrderId}")]
+        public async Task<ActionResult<ResponseModel<bool>>> DeliverOrder([FromRoute] int OrderId)
+        {
+            var res = await _orderService.DeliverOrder(OrderId);
+            return Ok(res);
+        }
+        [HttpPost("Driver/Cancel/{OrderId}")]
+        public async Task<ActionResult<ResponseModel<bool>>> CancelOrder([FromRoute] int OrderId)
+        {
+            var res = await _orderService.CancelOrder(OrderId);
+            return Ok(res);
+        }
+        [HttpPost("Driver/PickUp/{OrderId}")]
+        public async Task<ActionResult<ResponseModel<bool>>> PickUp([FromRoute] int OrderId)
+        {
+            var res = await _orderService.PickUpOrder(OrderId);
+            return Ok(res);
+        }
     }
 }

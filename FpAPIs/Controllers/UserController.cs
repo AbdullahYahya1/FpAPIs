@@ -1,4 +1,5 @@
 ﻿using Business.IServices;
+using Common;
 using DataAccess.DTOs;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -31,10 +32,22 @@ namespace FpAPIs.Controllers
             var res = await _userService.AddDriver(driverDto);
             return Ok(res);
         }
+        [HttpPost("ToggleUserStatus/{UserId}")]
+        public async Task<ActionResult<ResponseModel<bool>>> ToggleUserStatus(string UserId)
+        {
+            var res = await _userService.ToggleUserStatus(UserId);
+            return res;
+        }
         [HttpPost("UpdateUser")]
         public async Task<ActionResult<ResponseModel<bool>>> UpdateUser(PutUserDto userDto)
         {
             var res = await _userService.UpdateUser(userDto);
+            return Ok(res);
+        }
+        [HttpGet("GetUsers")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<GetUserDto>>>> GetUsers([FromQuery] UserType? type = null)
+        {
+            var res = await _userService.GetAllUsersAsync(type);
             return Ok(res);
         }
     }

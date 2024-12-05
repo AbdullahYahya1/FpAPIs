@@ -27,7 +27,7 @@ namespace Business.IServices
         Task<ResponseModel<bool>> ResetPassword(ResetPasswordDto resetPasswordDto);
         Task<ResponseModel<bool>> ForgetPassword(ForgetPasswordDto forgetPasswordDto);
         Task<ResponseModel<AuthenticationResponse>> CustomerAuthenticate(string phone);
-
+        Task<ResponseModel<bool>> ToggleUserStatus(string userId);
         Task<ResponseModel<List<LookUpDataModel<string>>>> DriversUsersLookUp();
 
     }

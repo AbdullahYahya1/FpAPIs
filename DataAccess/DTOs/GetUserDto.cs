@@ -13,9 +13,6 @@ namespace DataAccess.DTOs
         public string UserId { get; set; }
         public string? Email { get; set; }
         public string? UserName { get; set; }
-        public UserType UserType { get; set; }
-        public string UserImageURL { get; set; }
-        public DateTime DateOfBirth { get; set; }
         public bool IsActive { get; set; }
         public string MobileNumber { get; set; }
     }

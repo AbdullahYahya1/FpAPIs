@@ -9,7 +9,6 @@ namespace Common
     {
         Client = 0,
         Manager = 1,
-        Support = 2,
         DeliveryRepresentative = 3 
     }
 

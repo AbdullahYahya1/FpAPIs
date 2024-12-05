@@ -265,18 +265,7 @@ namespace Business.Services
                 user.Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
                 user.DateCreated = DateTime.UtcNow;
                 user.IsActive = true;
-                if (string.IsNullOrEmpty(currentUserId))
-                {
-                    user.UserType = UserType.Client;
-                }
-                else if (!string.IsNullOrEmpty(currentUserId) && type == UserType.Manager.ToString())
-                {
-                    user.UserType = UserType.Support;
-                }
-                else
-                {
-                    user.UserType = UserType.Client;
-                }
+                user.UserType = UserType.Client;
                 await _unitOfWork.Users.CreateUser(user);
                 return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
             }
@@ -381,7 +370,6 @@ namespace Business.Services
                 {
                     IsSuccess = true,
                     Result = userDtos,
-                    Message = string.Empty
                 };
             }
             catch (Exception ex)
@@ -693,6 +681,26 @@ namespace Business.Services
             {
                 return new ResponseModel<AuthenticationResponse> { IsSuccess = false, Message = "ErrorFound" };
             }
+        }
+
+        public async Task<ResponseModel<bool>> ToggleUserStatus(string DriverId)
+        {
+            var user = await _unitOfWork.Users.GetUserById(DriverId);
+            if (user == null) {
+                return new ResponseModel<bool>
+                {
+                    Message = "UserNotFound",
+                    IsSuccess = false
+                };
+            }
+            user.IsActive = !user.IsActive;
+            await  _unitOfWork.Users.UpdateUser(user);
+            await _unitOfWork.SaveChangesAsync();
+            return new ResponseModel<bool>
+            {
+                IsSuccess = true,
+                Result = true
+            };
         }
     }
 }

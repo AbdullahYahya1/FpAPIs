@@ -89,13 +89,12 @@ try
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowSpecificOrigin",
-            policyBuilder => policyBuilder.WithOrigins("http://localhost:4200")
+            policyBuilder => policyBuilder.WithOrigins("http://localhost:4200", "https://sage-praline-410c85.netlify.app")
                                           .AllowAnyHeader()     
                                           .AllowAnyMethod()
                                           .AllowCredentials());
     });
 
-    builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri("https://localhost:4200") });
 
     builder.Services.AddControllers().AddJsonOptions(options =>
     {

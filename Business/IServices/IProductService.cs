@@ -19,7 +19,7 @@ namespace Business.IServices
         Task<ResponseModel<bool>> CreateProdcutCategory(PostCategoryDto postCategoryDto);
         Task<ResponseModel<bool>> CreateProdcutStyle(PostStyleDto postStyleDto);
         Task<ResponseModel<bool>> CreateProdcutBrand(PostBrandDto brandPostDto);
-        Task<ResponseModel<bool>> UpdateProduct(int productId, PostProdcutDto updateProductDto);
+        Task<ResponseModel<GetProductDto>> UpdateProduct(int productId, PostProdcutDto updateProductDto);
 
         Task<ResponseModel<List<LookUpDataModel<int>>>> GetBrandsLookUp();
         Task<ResponseModel<List<LookUpDataModel<int>>>> GetStyleLookUp();

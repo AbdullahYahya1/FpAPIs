@@ -603,7 +603,7 @@ namespace Business.Services
         {
             try { 
             var rse = await _unitOfWork.Users.getUsersByType(UserType.DeliveryRepresentative);
-            var result = rse.Select(enumValue => new LookUpDataModel<string>
+            var result = rse.Where(u=>u.IsActive).Select(enumValue => new LookUpDataModel<string>
             {
                 Value = enumValue.UserId,
                 NameAr = enumValue.UserName,
@@ -617,23 +617,25 @@ namespace Business.Services
             }
         }
 
-        public async Task<ResponseModel<bool>> AddDriver(PostDriverDto postDriverDto)
+        public async Task<ResponseModel<GetUserDto>> AddDriver(PostDriverDto postDriverDto)
         {
             try { 
             var existingUser = await _unitOfWork.Users.GetUserByMobileNumber(postDriverDto.MobileNumber);
             if (existingUser != null)
             {
-                return new ResponseModel<bool> { IsSuccess = false, Message = "UserAlreadyExists" };
+                return new ResponseModel<GetUserDto> { IsSuccess = false, Message = "UserAlreadyExists" };
             }
             var user = _mapper.Map<AppUser>(postDriverDto);
             user.Password = BCrypt.Net.BCrypt.HashPassword(postDriverDto.Password);
             user.UserType = UserType.DeliveryRepresentative;
             await _unitOfWork.Users.CreateUser(user);
-            return new ResponseModel<bool> { IsSuccess = true, Result = true, Message = string.Empty };
+            var UserD = _mapper.Map<GetUserDto>(user);
+
+                return new ResponseModel<GetUserDto> { IsSuccess = true,Result =UserD , Message = string.Empty };
             }
             catch (Exception ex)
             {
-                return new ResponseModel<bool> { IsSuccess = false, Message = "ErrorFound" };
+                return new ResponseModel<GetUserDto> { IsSuccess = false, Message = "ErrorFound" };
             }
         }
 

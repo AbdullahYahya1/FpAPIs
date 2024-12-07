@@ -7,6 +7,7 @@ using DataAccess.IRepositories;
 using DataAccess.Models;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -58,80 +59,100 @@ namespace Business.Services
                 return new ResponseModel<Product> { IsSuccess = false, Message = "ErrorFound" };
             }
         }
-
-        public async Task<ResponseModel<bool>> UpdateProduct(int productId, PostProductDto updateProductDto)
+        public async Task<ResponseModel<GetProductDto>> UpdateProduct(int productId, PostProdcutDto updateProductDto)
         {
             try
             {
                 var product = await _unitOfWork.Products.GetProductWithImageIncludesAsync(productId);
                 if (product == null)
                 {
-                    return new ResponseModel<bool> { IsSuccess = false, Message = "ProductNotFound" };
+                    return new ResponseModel<GetProductDto> { IsSuccess = false, Message = "ProductNotFound" };
                 }
 
                 _mapper.Map(updateProductDto, product);
-
-                await _unitOfWork.Products.UpdateAsync(product);
-                await _unitOfWork.SaveChangesAsync();
-
-                var providedImages = updateProductDto.ImagesString64;
-                var existingImages = product.Images.ToList();
-
-                // If no images are provided, remove all existing images
-                if (providedImages == null || !providedImages.Any())
+                if (updateProductDto.ImagesString64 == null || updateProductDto.ImagesString64.Count() == 0)
                 {
-                    foreach (var item in existingImages)
+                    foreach (var image in product.Images)
                     {
-                        var imagePath = Path.Combine("wwwroot", item.ImageUrl);
+                        var imagePath = Path.Combine("wwwroot", image.ImageUrl);
                         if (File.Exists(imagePath))
                         {
                             File.Delete(imagePath);
                         }
-                        product.Images.Remove(item);
+                        _context.Set<ProductImage>().Remove(image);
                     }
+                    await _unitOfWork.Products.UpdateAsync(product);
+                    await _unitOfWork.SaveChangesAsync();
                 }
-                else
+                if (updateProductDto.ImagesString64 != null && updateProductDto.ImagesString64.Any())
                 {
-                    var base64Images = providedImages.Where(img => img.StartsWith("data:image", StringComparison.OrdinalIgnoreCase)).ToList();
-                    var existingImagePaths = providedImages.Except(base64Images).ToList();
-                    foreach (var dbImage in existingImages)
+                    var currentImageUrls = product.Images.Select(img => img.ImageUrl).ToList();
+                    var newBase64Images = new List<string>();
+                    var updatedImageUrls = new List<string>();
+
+                    
+                    foreach (var imageString in updateProductDto.ImagesString64)
                     {
-                        if (!existingImagePaths.Contains(dbImage.ImageUrl))
+                        if (imageString.StartsWith("images/"))
                         {
-                            var imagePath = Path.Combine("wwwroot", dbImage.ImageUrl);
-                            if (File.Exists(imagePath))
-                            {
-                                File.Delete(imagePath);
-                            }
-                            product.Images.Remove(dbImage);
+                            updatedImageUrls.Add(imageString);
+                        }
+                        else
+                        {
+                            newBase64Images.Add(imageString);
                         }
                     }
-                    foreach (var img in base64Images)
+
+                    
+                    var imagesToRemove = product.Images
+                        .Where(img => !updatedImageUrls.Contains(img.ImageUrl))
+                        .ToList();
+
+                    foreach (var image in imagesToRemove)
                     {
-                        var imageBytes = Convert.FromBase64String(img.Split(',')[1]); // Remove base64 metadata
-                        var uniqueFileName = $"{Guid.NewGuid()}.jpg";
-                        var physicalPath = Path.Combine("wwwroot", "images", uniqueFileName);
-                        await System.IO.File.WriteAllBytesAsync(physicalPath, imageBytes);
-                        var relativeImagePath = Path.Combine("images", uniqueFileName).Replace("\\", "/");
-                        var productImage = new ProductImage
+                        var imagePath = Path.Combine("wwwroot", image.ImageUrl);
+                        if (File.Exists(imagePath))
                         {
-                            ImageUrl = relativeImagePath,
-                            ProductId = product.ProductId
-                        };
-                        product.Images.Add(productImage);
+                            File.Delete(imagePath); 
+                        }
+                        _context.Set<ProductImage>().Remove(image); 
+                    }
+
+                    
+                    foreach (var base64Image in newBase64Images)
+                    {
+                        try
+                        {
+                            var imageBytes = Convert.FromBase64String(base64Image);
+                            var uniqueFileName = $"{Guid.NewGuid()}.jpg";
+                            var physicalPath = Path.Combine("wwwroot", "images", uniqueFileName);
+                            await System.IO.File.WriteAllBytesAsync(physicalPath, imageBytes);
+                            var relativeImagePath = Path.Combine("images", uniqueFileName).Replace("\\", "/");
+                            var productImage = new ProductImage
+                            {
+                                ImageUrl = relativeImagePath,
+                                ProductId = product.ProductId
+                            };
+                            product.Images.Add(productImage);
+                        }
+                        catch (FormatException)
+                        {
+                            return new ResponseModel<GetProductDto> { IsSuccess = false, Message = "InvalidBase64Format" };
+                        }
                     }
                 }
 
                 await _unitOfWork.Products.UpdateAsync(product);
                 await _unitOfWork.SaveChangesAsync();
+                var updatedProductDto = _mapper.Map<GetProductDto>(product);
 
-                return new ResponseModel<bool> { IsSuccess = true, Result = true };
+                return new ResponseModel<GetProductDto> { IsSuccess = true, Result = updatedProductDto};
             }
             catch (Exception ex)
-            {
-                return new ResponseModel<bool>
+            { 
+                return new ResponseModel<GetProductDto>
                 {
-                    Message = "ErrorFound",
+                    Message = $"ErrorFound: {ex.Message}",
                     IsSuccess = false
                 };
             }

@@ -14,7 +14,7 @@ namespace Business.IServices
     {
         Task<ResponseModel<bool>> CreateUser(PostUserDto userDto);
         Task<ResponseModel<bool>> CreateCustomerUser(PostCustomerUserDto userDto);
-        Task<ResponseModel<bool>> AddDriver(PostDriverDto postDriverDto);
+        Task<ResponseModel<GetUserDto>> AddDriver(PostDriverDto postDriverDto);
 
         Task<ResponseModel<AuthenticationResponse>> Authenticate(string emailOrName, string password);
         Task<ResponseModel<AuthenticationResponse>> CustomerAuthenticate(string Phone, string password);

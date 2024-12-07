@@ -27,7 +27,7 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
         [HttpPost("AddDriver")]
-        public async Task<ActionResult<ResponseModel<bool>>> AddDriver(PostDriverDto driverDto)
+        public async Task<ActionResult<ResponseModel<GetUserDto>>> AddDriver(PostDriverDto driverDto)
         {
             var res = await _userService.AddDriver(driverDto);
             return Ok(res);

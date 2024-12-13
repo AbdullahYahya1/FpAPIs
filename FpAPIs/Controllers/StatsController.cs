@@ -199,7 +199,7 @@ namespace GoodApiHereForYou.Controllers
                 .Where(p => p.ProductStatus == ProductStatus.Active)
                 .CountAsync();
 
-            var totalWishlistItems = await _context.WishlistItems.CountAsync();
+            var totalClients = await _context.Users.Where(u => u.UserType == UserType.Client).CountAsync();
 
             var cancelledOrders = await _context.Orders
                 .Where(o => o.Status == OrderStatus.Cancelled)
@@ -219,7 +219,7 @@ namespace GoodApiHereForYou.Controllers
                 PendingServiceRequests = pendingServiceRequests,
                 CompletedOrdersToday = completedOrdersToday,
                 ProductsInStock = productsInStock,
-                TotalWishlistItems = totalWishlistItems,
+                TotalClients = totalClients,
                 CancelledOrders = cancelledOrders,
                 TotalRevenueThisMonth = totalRevenueThisMonth,
             };

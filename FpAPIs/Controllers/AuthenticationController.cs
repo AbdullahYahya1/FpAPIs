@@ -43,17 +43,17 @@ public class AuthenticationController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("ResetPassword")]
-    public async Task<ActionResult<ResponseModel<bool>>> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
-    {
-        var response = await _userService.ResetPassword(resetPasswordDto);
-        return Ok(response);
-    }
+    //[HttpPost("ResetPassword")]
+    //public async Task<ActionResult<ResponseModel<bool>>> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+    //{
+    //    var response = await _userService.ResetPassword(resetPasswordDto);
+    //    return Ok(response);
+    //}
 
-    [HttpPost("ForgetPassword")]
-    public async Task<ActionResult<ResponseModel<bool>>> ForgetPassword([FromBody] ForgetPasswordDto forgetPasswordDto)
-    {
-        var response = await _userService.ForgetPassword(forgetPasswordDto);
-        return Ok(response);
-    }
+    //[HttpPost("ForgetPassword")]
+    //public async Task<ActionResult<ResponseModel<bool>>> ForgetPassword([FromBody] ForgetPasswordDto forgetPasswordDto)
+    //{
+    //    var response = await _userService.ForgetPassword(forgetPasswordDto);
+    //    return Ok(response);
+    //}
 }

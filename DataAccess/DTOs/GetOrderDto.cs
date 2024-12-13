@@ -10,6 +10,7 @@ namespace DataAccess.DTOs
 {
     public class GetOrderDto
     {
+        public virtual GetCustomerDto Customer { get; set; }
         public int OrderId { get; set; }
         public DateTime CreatedAt { get; set; }
         public OrderStatus Status { get; set; }

@@ -23,6 +23,7 @@ using DataAccess.IRepositories;
 using DataAccess.Mapping;
 using DataAccess.Context;
 using DataAccess.Repositories;
+using Business.Hubs;
 
 var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 try
@@ -54,6 +55,8 @@ try
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
     builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSignalR() ;
+
     builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "APIs", Version = "v1" });
@@ -89,7 +92,7 @@ try
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowSpecificOrigin",
-            policyBuilder => policyBuilder.WithOrigins("http://localhost:4200", "https://sage-praline-410c85.netlify.app")
+            policyBuilder => policyBuilder.WithOrigins("http://localhost:4200", "https://resonant-melomakarona-f57d6c.netlify.app")
                                           .AllowAnyHeader()     
                                           .AllowAnyMethod()
                                           .AllowCredentials());
@@ -119,6 +122,19 @@ try
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    context.HttpContext.Request.Path.StartsWithSegments("/userHub"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
     // Register  
@@ -146,7 +162,7 @@ try
 
     builder.Services.AddScoped<IUserPurchaseTransactionRepository, UserPurchaseTransactionRepository>();
     builder.Services.AddScoped<IUserPurchaseTransactionService, UserPurchaseTransactionService>();
-
+    builder.Services.AddScoped<INotificationService, NotificationService>();
     
     #region HealthChecks
 
@@ -174,6 +190,9 @@ try
 
     app.UseAuthentication();
     app.UseAuthorization();
+    app.MapHub<BroadcastHub>("/broadcastHub");
+    app.MapHub<AdminHub>("/Admin").AllowAnonymous();
+
 
     //app.MapHealthChecks("/HealthCheck/Check");
 

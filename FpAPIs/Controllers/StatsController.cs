@@ -1,4 +1,5 @@
-﻿using DataAccess.Context;
+﻿using Common;
+using DataAccess.Context;
 using DataAccess.DTOs;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ namespace GoodApiHereForYou.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-
+    [CustomAuthorize([UserType.Manager])]
     public class StatsController : ControllerBase
     {
         private readonly FPDbContext _context;
@@ -183,7 +184,7 @@ namespace GoodApiHereForYou.Controllers
             var totalOrders = await _context.Orders.CountAsync();
 
             var totalSales = await _context.Orders
-                .Where(o => o.Status == OrderStatus.Complete)
+                .Where(o => o.Transaction !=null)
                 .SumAsync(o => (decimal?)o.TotalPrice) ?? 0;
 
             var pendingServiceRequests = await _context.ServiceRequests
@@ -204,9 +205,10 @@ namespace GoodApiHereForYou.Controllers
                 .Where(o => o.Status == OrderStatus.Cancelled)
                 .CountAsync();
 
+            var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
             var totalRevenueThisMonth = await _context.Orders
-                .Where(o => o.Status == OrderStatus.Complete && o.CreatedAt.Month == DateTime.UtcNow.Month && o.CreatedAt.Year == DateTime.UtcNow.Year)
-                .SumAsync(o => (decimal?)o.TotalPrice) ?? 0;
+            .Where(o => o.Transaction != null && o.CreatedAt >= thirtyDaysAgo)
+            .SumAsync(o => (decimal?)o.TotalPrice) ?? 0;
 
             var stats = new
             {

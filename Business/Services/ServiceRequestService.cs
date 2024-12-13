@@ -21,11 +21,14 @@ namespace Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        public ServiceRequestService(FPDbContext context, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(context)
+        private readonly INotificationService _notificationService;
+        public ServiceRequestService(FPDbContext context, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,INotificationService notificationService) : base(context)
         { 
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _notificationService = notificationService;
+
         }
 
         public async Task<ResponseModel<bool>> CreateService(PostServiceDto serviceRequest)
@@ -61,6 +64,7 @@ namespace Business.Services
                     }
                     await _unitOfWork.SaveChangesAsync();
                 }
+                await _notificationService.NotifyAdminAsync("Service");
                 return new ResponseModel<bool> { IsSuccess = true, Result = true };
             } catch (Exception ex)
             {

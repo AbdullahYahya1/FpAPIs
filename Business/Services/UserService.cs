@@ -54,8 +54,7 @@ namespace Business.Services
                     user = await _unitOfWork.Users.GetUserByName(emailOrName);
                 }
 
-
-                if (user == null || !user.IsActive)
+               if (user == null || !user.IsActive)
                 {
                     return new ResponseModel<AuthenticationResponse>
                     {
@@ -169,7 +168,7 @@ namespace Business.Services
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Issuer"],
                 claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -193,6 +192,16 @@ namespace Business.Services
 
                 var userID = principal.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
                 var user = await _unitOfWork.Users.GetUserById(userID);
+                
+
+                if(user.RefreshToken != tokenRequest.RefreshToken)
+                {
+                    return new ResponseModel<TokenResponse> { IsSuccess = false, Message = "RefreshTokenNotTheSameInDataBase" };
+                }
+                if(user.IsActive == false)
+                {
+                    return new ResponseModel<TokenResponse> { IsSuccess = false, Message = "UserNotActive" };
+                }
                 if (user == null || user.RefreshToken != tokenRequest.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
                     return new ResponseModel<TokenResponse> { IsSuccess = false, Message = "InvalidRefreshToken" };
 
@@ -202,6 +211,7 @@ namespace Business.Services
                 user.RefreshToken = newRefreshToken;
                 user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
                 await _unitOfWork.Users.UpdateUser(user);
+                await _unitOfWork.SaveChangesAsync();
 
                 return new ResponseModel<TokenResponse>
                 {
@@ -314,6 +324,11 @@ namespace Business.Services
                 if (userDto.UserName != currentUser.UserName && await _unitOfWork.Users.GetUserByName(userDto.UserName) != null)
                 {
                     return new ResponseModel<bool> { IsSuccess = false, Message = "UsernameInUse" };
+                }
+
+                if (userDto.Email != currentUser.Email && await _unitOfWork.Users.GetUserByEmail(userDto.Email) != null)
+                {
+                    return new ResponseModel<bool> { IsSuccess = false, Message = "EmailInUse" };
                 }
                 _mapper.Map(userDto, currentUser);
                 await _unitOfWork.Users.UpdateUser(currentUser);
@@ -543,6 +558,14 @@ namespace Business.Services
                     {
                         IsSuccess = false,
                         Message = "UserNotFound"
+                    };
+                }
+                if (!user.IsActive)
+                {
+                    return new ResponseModel<AuthenticationResponse>
+                    {
+                        IsSuccess = false,
+                        Message = "UserNotActive"
                     };
                 }
                 if (user.Password == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))

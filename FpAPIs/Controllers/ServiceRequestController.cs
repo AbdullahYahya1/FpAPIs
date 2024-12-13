@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Business.IServices;
+using Common;
 using DataAccess.DTOs;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,8 @@ namespace FpAPIs.Controllers
         }
 
         [HttpGet("GetCurrentUserServices")]
+
+        [CustomAuthorize([UserType.Manager, UserType.Client])]
         public async Task<ActionResult<ResponseModel<List<GetServiceDto>>>> GetCurrentUserServices()
         {
             var res = await _serviceRequest.GetServices();
@@ -29,6 +32,7 @@ namespace FpAPIs.Controllers
         }
 
         [HttpGet("GetCurrentUserService/{ServiceId}")]
+        [CustomAuthorize([UserType.Manager, UserType.Client])]
         public async Task<ActionResult<ResponseModel<GetServiceDto>>> GetCurrentUserService(int ServiceId)
         {
             var res = await _serviceRequest.GetServicesByID(ServiceId);
@@ -36,6 +40,7 @@ namespace FpAPIs.Controllers
         }
 
         [HttpPost("CreateService")]
+        [CustomAuthorize([UserType.Client])]
         public async Task<ActionResult<ResponseModel<bool>>> CreateService(PostServiceDto serviceDto)
         {
             var res = await _serviceRequest.CreateService(serviceDto);
@@ -43,6 +48,7 @@ namespace FpAPIs.Controllers
         }
 
         [HttpPut("ResponseToRequest/{RequestId}")]
+        [CustomAuthorize([UserType.Manager])]
         public async Task<ActionResult<ResponseModel<bool>>> ResponseToRequest(int RequestId, UpdateRequestDto updateRequestDto)
         {
             var res = await _serviceRequest.ResponseToRequest(RequestId, updateRequestDto);

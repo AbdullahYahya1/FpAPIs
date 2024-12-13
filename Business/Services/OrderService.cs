@@ -15,12 +15,14 @@ namespace Business.Services
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly INotificationService _notificationService;
 
-        public OrderService(FPDbContext context, IMapper mapper, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor) : base(context)
+        public OrderService(FPDbContext context, IMapper mapper, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor , INotificationService notificationService) : base(context)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
+            _notificationService = notificationService;
         }
 
         public async Task<ResponseModel<GetOrderDto>> AddOrder(PostOrderDto postOrder)
@@ -86,6 +88,7 @@ namespace Business.Services
                     await _unitOfWork.SaveChangesAsync();
                     transaction.Commit();
                     var orderDto = _mapper.Map<GetOrderDto>(order);
+                    await _notificationService.NotifyAdminAsync("Order");
                     return new ResponseModel<GetOrderDto>()
                     {
                         Result = orderDto,

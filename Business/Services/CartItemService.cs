@@ -35,7 +35,16 @@ namespace Business.Services
                 var currentUserId = _httpContextAccessor.HttpContext.User?.FindFirst("UserId")?.Value;
                 if (string.IsNullOrEmpty(currentUserId) || item?.ProductId == null)
                 {
-                    return new ResponseModel<bool> { IsSuccess = false, Message = "Invalid user or product" };
+                    return new ResponseModel<bool> { IsSuccess = false, Message = "InvalidUserOrProduct" };
+                }
+                var product = await _unitOfWork.Products.GetProductAllWithIncludesAsync(item.ProductId);
+                if (product == null)
+                {
+                    return new ResponseModel<bool> { IsSuccess = false, Message = "ProductNotFound" };
+                }
+                if (product.ProductStatus == ProductStatus.Inactive)
+                {
+                    return new ResponseModel<bool> { IsSuccess = false, Message = "ProductIsNotAvailable" };
                 }
                 var cartItem = _mapper.Map<CartItem>(item);
                 cartItem.UserId = currentUserId;

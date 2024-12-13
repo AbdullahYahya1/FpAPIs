@@ -20,7 +20,7 @@ namespace DataAccess.Mapping
             CreateMap<AppUser, PostCustomerUserDto>().ReverseMap();
             CreateMap<AppUser, PostDriverDto>().ReverseMap();
             CreateMap<AppUser, GetUserPhoneDto>().ReverseMap();
-
+            CreateMap<AppUser, GetCustomerDto>().ReverseMap();
 
             CreateMap<Product, PostProdcutDto>().ReverseMap();
 

@@ -1,4 +1,5 @@
 ﻿using Business.IServices;
+using Common;
 using DataAccess.DTOs;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -20,19 +21,22 @@ namespace FpAPIs.Controllers
             _userAddressService = userAddressService;
         }
 
+        [CustomAuthorize([UserType.Client])]
         [HttpPost("CreateAddress")]
         public async Task<ActionResult<ResponseModel<bool>>> CreateAddress(PostAddressDto postAddressDto)
         {
             var res = await _userAddressService.AddAddress(postAddressDto);
             return Ok(res);
         }
-
+        [CustomAuthorize([UserType.Client])]
         [HttpGet("GetAddresses")]
         public async Task<ActionResult<ResponseModel<List<GetAddressDto>>>> GetAddresses()
         {
             var res = await _userAddressService.GetAddresses();
             return Ok(res);
         }
+
+        [CustomAuthorize([UserType.Client])]
         [HttpPut("UpdateAddress")]
         public async Task<ActionResult<ResponseModel<bool>>> UpdateAddress(UpdateAddressDto updateAddressDto)
         {

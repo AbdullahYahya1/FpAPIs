@@ -1,4 +1,5 @@
 ﻿using Business.IServices;
+using Common;
 using DataAccess.DTOs;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +27,6 @@ namespace FpAPIs.Controllers
             var res = await _productService.SearchProducts(productSearchDto);
             return Ok(res);
         }
-        [Authorize]
         [HttpGet("GetProduct/{productId}")]
         public async Task<ActionResult<ResponseModel<GetProductDto>>> GetProducts(int productId)
         {
@@ -34,6 +34,7 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
         [Authorize]
+        [CustomAuthorize([UserType.Manager])]
         [HttpPost("AddProduct")]
         public async Task<ActionResult<ResponseModel<Product>>> AddProdcut(PostProdcutDto postProdcutDto)
         {
@@ -41,6 +42,7 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
         [Authorize]
+        [CustomAuthorize([UserType.Manager])]
         [HttpPut("UpdateProduct/{ProductId}")]
         public async Task<ActionResult<ResponseModel<bool>>> UpdateProduct([FromRoute] int ProductId, PostProdcutDto updateProductDto)
         {
@@ -48,6 +50,7 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
         [Authorize]
+        [CustomAuthorize([UserType.Manager])]
         [HttpPost("DeactivateProduct/{productId}")]
         public async Task<ActionResult<ResponseModel<bool>>> DeactivateProduct(int productId)
         {
@@ -55,6 +58,7 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
         [Authorize]
+        [CustomAuthorize([UserType.Manager])]
         [HttpPost("AddBrand")]
         public async Task<ActionResult<ResponseModel<bool>>> AddBrand(PostBrandDto brandDto)
         {
@@ -62,6 +66,7 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
         [Authorize]
+        [CustomAuthorize([UserType.Manager])]
         [HttpPost("AddStyle")]
         public async Task<ActionResult<ResponseModel<bool>>> AddStyle(PostStyleDto styleDto)
         {
@@ -69,6 +74,7 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
         [Authorize]
+        [CustomAuthorize([UserType.Manager])]
         [HttpPost("AddMaterial")]
         public async Task<ActionResult<ResponseModel<bool>>> AddMaterial(PostMaterialDto materialDto)
         {
@@ -76,12 +82,14 @@ namespace FpAPIs.Controllers
             return Ok(res);
         }
         [Authorize]
+        [CustomAuthorize([UserType.Manager])]
         [HttpPost("AddCategory")]
         public async Task<ActionResult<ResponseModel<bool>>> AddCategory(PostCategoryDto categoryDto)
         {
             var res = await _productService.CreateProdcutCategory(categoryDto);
             return Ok(res);
         }
+       
         [HttpGet("GetBrandsLookUp")]
         public async Task<ActionResult<ResponseModel<List<LookUpDataModel<int>>>>> GetBrandsLookUp()
         {

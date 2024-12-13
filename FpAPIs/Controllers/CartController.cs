@@ -1,4 +1,5 @@
 ﻿using Business.IServices;
+using Common;
 using DataAccess.DTOs;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ namespace FpAPIs.Controllers
         }
 
         [HttpGet("GetCartItems")]
+        [CustomAuthorize([UserType.Client])]
         public async Task<ActionResult<ResponseModel<List<GetProductDto>>>> GetCartItems()
         {
             var res = await _cartItemService.GetAllCartItemAsync();
@@ -28,6 +30,7 @@ namespace FpAPIs.Controllers
         }
 
         [HttpPost("AddCartItem")]
+        [CustomAuthorize([UserType.Client])]
         public async Task<ActionResult<ResponseModel<bool>>> AddCartItem([FromBody] CartItemDto cartItemDto)
         {
             var res = await _cartItemService.AddCartItemAsync(cartItemDto);
@@ -35,6 +38,7 @@ namespace FpAPIs.Controllers
         }
 
         [HttpPost("RemoveCartItem")]
+        [CustomAuthorize([UserType.Client])]
         public async Task<ActionResult<ResponseModel<bool>>> RemoveCartItem([FromBody] CartItemDto cartItemDto)
         {
             var res = await _cartItemService.RemoveCartItemAsync(cartItemDto);

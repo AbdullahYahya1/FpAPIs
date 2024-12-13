@@ -15,30 +15,30 @@ namespace FpAPIs.Controllers
     {
         private readonly IWishlistItemService _wishlistItemService;
 
-        public WishlistController(IWishlistItemService wishlistItemService)
-        {
-            _wishlistItemService = wishlistItemService;
-        }
+        //public WishlistController(IWishlistItemService wishlistItemService)
+        //{
+        //    _wishlistItemService = wishlistItemService;
+        //}
 
-        [HttpGet("GetWishlistItems")]
-        public async Task<ActionResult<ResponseModel<List<GetProductDto>>>> GetWishlistItems()
-        {
-            var res = await _wishlistItemService.GetAllWishlistItemsAsync();
-            return Ok(res);
-        }
+        //[HttpGet("GetWishlistItems")]
+        //public async Task<ActionResult<ResponseModel<List<GetProductDto>>>> GetWishlistItems()
+        //{
+        //    var res = await _wishlistItemService.GetAllWishlistItemsAsync();
+        //    return Ok(res);
+        //}
 
-        [HttpPost("AddWishlistItem")]
-        public async Task<ActionResult<ResponseModel<bool>>> AddWishlistItem([FromBody] WishlistItemDto wishlistItemDto)
-        {
-            var res = await _wishlistItemService.AddWishlistItemAsync(wishlistItemDto);
-            return Ok(res);
-        }
+        //[HttpPost("AddWishlistItem")]
+        //public async Task<ActionResult<ResponseModel<bool>>> AddWishlistItem([FromBody] WishlistItemDto wishlistItemDto)
+        //{
+        //    var res = await _wishlistItemService.AddWishlistItemAsync(wishlistItemDto);
+        //    return Ok(res);
+        //}
 
-        [HttpPost("RemoveWishlistItem")]
-        public async Task<ActionResult<ResponseModel<bool>>> RemoveWishlistItem([FromBody] WishlistItemDto wishlistItemDto)
-        {
-            var res = await _wishlistItemService.RemoveWishlistItemAsync(wishlistItemDto);
-            return Ok(res);
-        }
+        //[HttpPost("RemoveWishlistItem")]
+        //public async Task<ActionResult<ResponseModel<bool>>> RemoveWishlistItem([FromBody] WishlistItemDto wishlistItemDto)
+        //{
+        //    var res = await _wishlistItemService.RemoveWishlistItemAsync(wishlistItemDto);
+        //    return Ok(res);
+        //}
     }
 }

@@ -24,6 +24,7 @@ using DataAccess.Mapping;
 using DataAccess.Context;
 using DataAccess.Repositories;
 using Business.Hubs;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 try
@@ -187,7 +188,7 @@ try
         app.UseSwaggerUI();
     //}
     app.UseHttpsRedirection();
-
+ 
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapHub<BroadcastHub>("/broadcastHub");

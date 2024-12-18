@@ -182,11 +182,11 @@ try
     var app = builder.Build();
 
     // Configure the HTTP request pipeline. 
-    //if (app.Environment.IsDevelopment())
-    //{
+    if (app.Environment.IsDevelopment())
+    {
         app.UseSwagger();
         app.UseSwaggerUI();
-    //}
+    }
     app.UseHttpsRedirection();
  
     app.UseAuthentication();
@@ -208,7 +208,7 @@ try
         {
             var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
             var backgroundJobService = scope.ServiceProvider.GetRequiredService<BackgroundJobService>();
-            recurringJobManager.AddOrUpdate("healthCheck-job", () => backgroundJobService.HealthCheck(), Cron.HourInterval(1));
+            recurringJobManager.AddOrUpdate("healthCheck-job", () => backgroundJobService.HealthCheck(), Cron.Minutely);
             recurringJobManager.AddOrUpdate("cancel-orders-job",() => backgroundJobService.CancelOrders(),Cron.Minutely);
 
         }

@@ -23,16 +23,22 @@ namespace Business.EmailSender
         {
             try
             {
-                var emailSettings = _Configuration.GetSection("EmailSettings");
+                _logger.LogInformation("Preparing to send email...");
 
+                var emailSettings = _Configuration.GetSection("EmailSettings");
                 var mail = emailSettings["Username"];
                 var pass = emailSettings["Password"];
+                var host = emailSettings["Host"];
+                var port = int.Parse(emailSettings["Port"]);
 
-                var client = new SmtpClient(emailSettings["Host"], int.Parse(emailSettings["Port"]))
+                _logger.LogInformation($"Using SMTP host: {host}, port: {port}, user: {mail}");
+
+                var client = new SmtpClient(host, port)
                 {
                     Credentials = new NetworkCredential(mail, pass),
                     EnableSsl = true,
                 };
+
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(mail),
@@ -42,7 +48,9 @@ namespace Business.EmailSender
                 };
                 mailMessage.To.Add(email);
 
+                _logger.LogInformation($"Sending email to {email}...");
                 await client.SendMailAsync(mailMessage);
+                _logger.LogInformation("Email sent successfully.");
             }
             catch (Exception ex)
             {
@@ -50,4 +58,7 @@ namespace Business.EmailSender
             }
         }
     }
+
+
+
 }

@@ -28,7 +28,7 @@ namespace Business.Services
             _mapper = mapper;
             _unitOfWork = unitOfWork; 
         }
-        public async Task<ResponseModel<Product>> CreateProduct(PostProdcutDto postProdcutDto)
+        public async Task<ResponseModel<GetProductDto>> CreateProduct(PostProdcutDto postProdcutDto)
         {
             try { 
                 var product = _mapper.Map<Product>(postProdcutDto);
@@ -52,11 +52,13 @@ namespace Business.Services
                     }
                     await _unitOfWork.Products.UpdateAsync(product); 
                     await _unitOfWork.SaveChangesAsync();
+
                 }
-                return new ResponseModel<Product> { IsSuccess = true, Result = product };
+                var productDto = _mapper.Map<GetProductDto>(product);
+                return new ResponseModel<GetProductDto> { IsSuccess = true, Result = productDto };
             }catch(Exception ex)
             {
-                return new ResponseModel<Product> { IsSuccess = false, Message = "ErrorFound" };
+                return new ResponseModel<GetProductDto> { IsSuccess = false, Message = "ErrorFound" };
             }
         }
         public async Task<ResponseModel<GetProductDto>> UpdateProduct(int productId, PostProdcutDto updateProductDto)

@@ -22,7 +22,6 @@ using Business.Services;
 using DataAccess.IRepositories;
 using DataAccess.Mapping;
 using DataAccess.Context;
-using DataAccess.Repositories;
 using Business.Hubs;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -47,11 +46,6 @@ try
     builder.Services.AddHangfireServer();
     builder.Services.AddSingleton<BackgroundJobService>();
 
-    // Add services to the container. 
-    builder.Services.AddControllers().AddNewtonsoftJson(options =>
-    {
-        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-    });
     builder.Services.AddDbContext<FPDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
@@ -105,6 +99,7 @@ try
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.WriteIndented = true;
     });
+
 
     builder.Services.AddAuthentication(options =>
     {

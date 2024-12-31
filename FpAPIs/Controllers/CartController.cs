@@ -46,7 +46,7 @@ namespace FpAPIs.Controllers
 
             _logger.LogInformation($"Output for AddCartItem: {System.Text.Json.JsonSerializer.Serialize(res)}");
             return Ok(res);
-        }
+        }   
 
         [HttpPost("RemoveCartItem")]
         [CustomAuthorize([UserType.Client])]

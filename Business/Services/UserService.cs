@@ -99,8 +99,7 @@ namespace Business.Services
         {
             try
             {
-                var appUser = await _unitOfWork.Users.GetUserById(user.UserId);
-                if (appUser == null || !appUser.IsActive)
+                if (!user.IsActive)
                 {
                     return new ResponseModel<TokenResponse>
                     {
@@ -111,9 +110,9 @@ namespace Business.Services
                 var accessToken = GenerateJwtToken(user);
                 var refreshToken = GenerateRefreshToken();
 
-                appUser.RefreshToken = refreshToken;
-                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-                await _unitOfWork.Users.UpdateUser(appUser);
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+                await _unitOfWork.Users.UpdateUser(user);
 
                 return new ResponseModel<TokenResponse>
                 {
